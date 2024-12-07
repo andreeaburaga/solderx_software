@@ -1,6 +1,8 @@
 #ifndef PRESSURE_H
 #define PRESSURE_H
 #include "Wire.h"
+
+
 uint8_t pressure_address = 0x76;
 uint8_t reset_command = 0x1E;
 uint8_t promStartAddress = 0xA0;

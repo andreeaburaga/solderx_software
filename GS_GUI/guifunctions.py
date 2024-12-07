@@ -2,7 +2,7 @@
 import tkinter
 import serial
 
-ser = serial.Serial('com9', 38400)
+#ser = serial.Serial('/dev/tty4', 38400)
 
 def quit():
     global tkTop, ser
