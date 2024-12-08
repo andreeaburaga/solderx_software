@@ -2,7 +2,8 @@
 import tkinter
 import serial
 
-#ser = serial.Serial('/dev/tty4', 38400)
+ser = serial.Serial('/dev/tty4', 38400)
+
 
 def quit():
     global tkTop, ser
@@ -37,12 +38,20 @@ def set_button3_state():
 def set_button4_state():
     ser.write(bytes('cc', 'UTF-8'))
 
-#Turn ON optical encoder
+#Turn ON 12VDC/DC converter
 def set_button5_state():
+    ser.write(bytes('PP', 'UTF-8'))
+
+#Turn OFF 12VDC/DC converter 
+def set_button6_state():
+    ser.write(bytes('pp', 'UTF-8'))
+
+#Turn ON 10VDC/DC converter
+def set_button19_state():
     ser.write(bytes('RR', 'UTF-8'))
 
-#Turn OFF optical encoder 
-def set_button6_state():
+#Turn OFF 10VDC/DC converter 
+def set_button20_state():
     ser.write(bytes('rr', 'UTF-8'))
 
 # MOTORS
@@ -75,13 +84,13 @@ def set_button12_state():
 def set_button13_state():
     ser.write(bytes('HH', 'UTF-8'))
 
-#Maintain temperature
-def set_button14_state():
-    ser.write(bytes('hh', 'UTF-8'))
+# #Maintain temperature
+# def set_button14_state():
+#     ser.write(bytes('hh', 'UTF-8'))
 
 #Turn heating off
 def set_button15_state():
-    ser.write(bytes('oo', 'UTF-8'))
+    ser.write(bytes('hh', 'UTF-8'))
 
 # ARMING
 #Cold arm experiment

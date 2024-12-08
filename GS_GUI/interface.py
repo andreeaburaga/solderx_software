@@ -162,11 +162,12 @@ LO_Pin State: {}
 SOE_Pin State: {}
 State Machine Status: {}
 '''.format(int((time.time() - starttime) * 1000)/1000, solderingTargetTemperature, solderingCurrentTemperature, sampleDiscPosition, 
-                   feedingMechanismPosition, linearMotorPosition, 'HIGH' if LO_State else 'LOW',
-                   'HIGH' if SOE_State else 'LOW', stateMachineStatus)
+                feedingMechanismPosition, linearMotorPosition, 'HIGH' if LO_State else 'LOW',
+                'HIGH' if SOE_State else 'LOW', stateMachineStatus)
 
         since_last.config(text='Time since last packet: {0:.3f}ms'.format(elapsed/1000))
         no_errors["text"] = 'Errors: {}'.format(wrong)
+
 # label9 = 0
 
 def inctimer():
@@ -179,6 +180,7 @@ def inctimer():
     p = threading.Timer(.01, inctimer)
     p.start()
     p.join()
+
 
 if __name__ == '__main__':
     print("Reset Arduino2")

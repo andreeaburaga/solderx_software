@@ -15,23 +15,26 @@ def makelayout(tkTop):
     label7 = tkinter.Label(tkTop, text='Turn Camera',font=("Courier", 12,'bold'))
     label7.grid(row=2, column=0, padx=10, pady=10)
 
-    # label8 = tkinter.Label(tkTop, text='Turn Optical Encoder',font=("Courier", 12,'bold'))
-    # label8.grid(row=3, column=0, padx=10, pady=10)
+    label8 = tkinter.Label(tkTop, text='Turn 12V DC/DC converter',font=("Courier", 12,'bold'))
+    label8.grid(row=3, column=0, padx=10, pady=10)
+
+    label81 = tkinter.Label(tkTop, text='Turn 10V DC/DC converter',font=("Courier", 12,'bold'))
+    label81.grid(row=4, column=0, padx=10, pady=10)
 
     label3 = tkinter.Label(tkTop, text='Rotate Sample Disk',font=("Courier", 12,'bold'))
-    label3.grid(row=4, column=0, padx=10, pady=10)
+    label3.grid(row=5, column=0, padx=10, pady=10)
 
     label4 = tkinter.Label(tkTop, text='Move Soldering Unit',font=("Courier", 12,'bold'))
-    label4.grid(row=5, column=0, padx=10, pady=10)
+    label4.grid(row=6, column=0, padx=10, pady=10)
 
     label5 = tkinter.Label(tkTop, text='Rotate Feeding Mechanism',font=("Courier", 12,'bold'))
-    label5.grid(row=6, column=0, padx=10, pady=10)
+    label5.grid(row=7, column=0, padx=10, pady=10)
 
     label6 = tkinter.Label(tkTop, text='Heating Control',font=("Courier", 12,'bold'))
-    label6.grid(row=7, column=0, padx=10, pady=10)
+    label6.grid(row=8, column=0, padx=10, pady=10)
 
     label9 = tkinter.Label(tkTop, text='t=0',font=("Courier", 12,'bold'))
-    label9.grid(row=8, column=0, padx=10, pady=10)
+    label9.grid(row=9, column=0, padx=10, pady=10)
 
     #LEDs on
     button1state = tkinter.Button(tkTop,
@@ -77,27 +80,49 @@ def makelayout(tkTop):
     )
     button4state.grid(row=2, column=2, padx=10, pady=15, sticky='nsew')
 
-    # #Optical encoder on
-    # button5state = tkinter.Button(tkTop,
-    #     text="ON",
-    #     command=set_button5_state,
-    #     height=BUTTON_SIZE,
-    #     fg="black",
-    #     bd=3,
-    #     activebackground='green'
-    # )
-    # button5state.grid(row=3, column=1, padx=10, pady=15, sticky='nsew')
+    #12V DC/DC converter ON 
+    button5state = tkinter.Button(tkTop,
+        text="ON",
+        command=set_button5_state,
+        height=BUTTON_SIZE,
+        fg="black",
+        bd=3,
+        activebackground='green'
+    )
+    button5state.grid(row=3, column=1, padx=10, pady=15, sticky='nsew')
 
-    # #Optical encoder off
-    # button6state = tkinter.Button(tkTop,
-    #     text="OFF",
-    #     command=set_button6_state,
-    #     height=BUTTON_SIZE,
-    #     fg="black",
-    #     bd=3,
-    #     activebackground='red'
-    # )
-    # button6state.grid(row=3, column=2, padx=10, pady=15, sticky='nsew')
+    #12V DC/DC converter OFF
+    button6state = tkinter.Button(tkTop,
+        text="OFF",
+        command=set_button6_state,
+        height=BUTTON_SIZE,
+        fg="black",
+        bd=3,
+        activebackground='red'
+    )
+    button6state.grid(row=3, column=2, padx=10, pady=15, sticky='nsew')
+
+    #10V DC/DC converter ON 
+    button19state = tkinter.Button(tkTop,
+        text="ON",
+        command=set_button19_state,
+        height=BUTTON_SIZE,
+        fg="black",
+        bd=3,
+        activebackground='green'
+    )
+    button19state.grid(row=4, column=1, padx=10, pady=15, sticky='nsew')
+
+    #10V DC/DC converter OFF
+    button20state = tkinter.Button(tkTop,
+        text="OFF",
+        command=set_button20_state,
+        height=BUTTON_SIZE,
+        fg="black",
+        bd=3,
+        activebackground='red'
+    )
+    button20state.grid(row=4, column=2, padx=10, pady=15, sticky='nsew')
 
     #Sample disk
     button7state = tkinter.Button(tkTop,
@@ -108,7 +133,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='green'
     )
-    button7state.grid(row=4, column=1, padx=10, pady=15, sticky='nsew')
+    button7state.grid(row=5, column=1, padx=10, pady=15, sticky='nsew')
 
     #Sample disk
     button8state = tkinter.Button(tkTop,
@@ -119,7 +144,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button8state.grid(row=4, column=2, padx=10, pady=15, sticky='nsew')
+    button8state.grid(row=5, column=2, padx=10, pady=15, sticky='nsew')
 
     #Linear motor
     button9state = tkinter.Button(tkTop,
@@ -130,7 +155,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='green'
     )
-    button9state.grid(row=5, column=1, padx=10, pady=15, sticky='nsew')
+    button9state.grid(row=6, column=1, padx=10, pady=15, sticky='nsew')
 
     #Linear motor
     button10state = tkinter.Button(tkTop,
@@ -141,7 +166,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button10state.grid(row=5, column=2, padx=10, pady=15, sticky='nsew')
+    button10state.grid(row=6, column=2, padx=10, pady=15, sticky='nsew')
 
 
     '''Buttons for feeding mechanism'''
@@ -153,7 +178,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button11state.grid(row=6, column=1, padx=10, pady=15, sticky='nsew')
+    button11state.grid(row=7, column=1, padx=10, pady=15, sticky='nsew')
 
     button12state = tkinter.Button(tkTop,
         text="Counter-Clockwise",
@@ -163,7 +188,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button12state.grid(row=6, column=2, padx=10, pady=15, sticky='nsew')
+    button12state.grid(row=7, column=2, padx=10, pady=15, sticky='nsew')
 
     ''''''
     '''Heating control'''
@@ -175,17 +200,17 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button13state.grid(row=7, column=1, padx=10, pady=15, sticky='nsew')
+    button13state.grid(row=8, column=1, padx=10, pady=15, sticky='nsew')
 
-    button14state = tkinter.Button(tkTop,
-        text="Keep constant",
-        command=set_button14_state,
-        height=BUTTON_SIZE,
-        fg="black",
-        bd=3,
-        activebackground='red'
-    )
-    button14state.grid(row=7, column=3, padx=10, pady=15, sticky='nsew')
+    # button14state = tkinter.Button(tkTop,
+    #     text="Keep constant",
+    #     command=set_button14_state,
+    #     height=BUTTON_SIZE,
+    #     fg="black",
+    #     bd=3,
+    #     activebackground='red'
+    # )
+    # button14state.grid(row=8, column=3, padx=10, pady=15, sticky='nsew')
 
     button15state = tkinter.Button(tkTop,
         text="OFF",
@@ -195,7 +220,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='red'
     )
-    button15state.grid(row=7, column=2, padx=10, pady=15, sticky='nsew')
+    button15state.grid(row=8, column=2, padx=10, pady=15, sticky='nsew')
 
     '''Arming'''
 
