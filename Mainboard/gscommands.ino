@@ -30,6 +30,22 @@ void commsUpdate() {
             //dataLogger.println("Camera Led OFF");
             break;
 
+          //12V DC/DC converter
+          case 'P': //ON
+            digitalWrite(ONOFF12,HIGH);
+            break;
+          case 'p': //OFF
+            digitalWrite(ONOFF12,LOW);
+            break;
+
+          //10V DC/DC converter
+          case 'R': //ON
+            digitalWrite(ONOFF10,HIGH);
+            break;
+          case 'r': //OFF
+            digitalWrite(ONOFF10,LOW);
+            break;
+
           //Linear Motor
           case 'S': //retracted
             linearMotor.write(linearMotor_retracted);
@@ -64,7 +80,7 @@ void commsUpdate() {
           case 'H': //heating on
             targetTemperature = solderingTemperature;
             break; 
-          case 'o': //heating off
+          case 'h': //heating off
             targetTemperature = 0;
             break;
 
