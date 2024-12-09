@@ -5,9 +5,9 @@ void commsUpdate() {
   static uint8_t bufferPosition = 0;
   if(Serial1.available() > 0) {  //comms e pe Serial1, asculta pe Serial1
     buffer[bufferPosition] = Serial1.read();
-    Serial.print("Buffer: ");
-    Serial.print(buffer[0]);
-    Serial.println(buffer[1]);
+    // Serial.print("Buffer: ");
+    // Serial.print(buffer[0]);
+    // Serial.println(buffer[1]);
     bufferPosition++;
     if(bufferPosition >= 2) {   //check for overflow
       bufferPosition = 0;

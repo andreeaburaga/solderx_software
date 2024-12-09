@@ -21,23 +21,23 @@ void stateMachineUpdate()
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
-        Serial.println("S1");
+        // Serial.println("S1");
         machineState++;
         break;
       }
     case 2: {
         digitalWrite(ONOFF10, HIGH);
-        Serial.println("S2");
+        // Serial.println("S2");
         machineState++;
         break;
       }
     case 3: {
         if (digitalRead(LO) == 0)
         {
-          Serial.println("LO detected.");
+          // Serial.println("LO detected.");
           LO_millis = millis();
           //lastStateChange = millis();
-          Serial.println("S3");
+          // Serial.println("S3");
           machineState++;
         }
         break;
@@ -53,7 +53,7 @@ void stateMachineUpdate()
           digitalWrite(CAM_LED, HIGH);
           digitalWrite(CAM_EN, HIGH);
           machineState++;
-          Serial.println("S4");
+          // Serial.println("S4");
           //
         }
         break;
@@ -87,7 +87,7 @@ void stateMachineUpdate()
                   //
                   solderState = SU_HEAT;
                   stateData.enteredAt = millis();
-                  Serial.println("Moving to SU_HEAT from SU_ENGAGE");
+                  // Serial.println("Moving to SU_HEAT from SU_ENGAGE");
                 }
                 break;
               }
@@ -96,12 +96,12 @@ void stateMachineUpdate()
                   //
                   if (sampleNumber % 2 == 1) { //wick
                     solderState = SU_RETRACT;
-                    Serial.println("Moving to SU_RETRACT from SU_HEAT (wick)");
+                    // Serial.println("Moving to SU_RETRACT from SU_HEAT (wick)");
                   }
                   else { //pad
                     targetStepsFM += stateData.stepsForwardFM ;
                     solderState = SU_SOLDER;
-                    Serial.println("Moving to SU_SOLDER from SU_HEAT (pad)");
+                    // Serial.println("Moving to SU_SOLDER from SU_HEAT (pad)");
                   }
                   stateData.enteredAt = millis();
 
@@ -112,7 +112,7 @@ void stateMachineUpdate()
                 if (millis() - stateData.enteredAt > stateData.t_SU_SOLDER) {
                   solderState = SU_RETRACT;
                   targetStepsFM -= stateData.stepsBackwardFM;
-                  Serial.println("Moving to SU_RETRACT from SU_SOLDER");
+                  // Serial.println("Moving to SU_RETRACT from SU_SOLDER");
                 }
 
                 break;
@@ -122,7 +122,7 @@ void stateMachineUpdate()
                 if (millis() - stateData.enteredAt > stateData.t_SU_RETRACT) {
                   //
                   solderState = SU_DISK;
-                  Serial.println("Moving to SU_DISK from SU_RETRACT");
+                  // Serial.println("Moving to SU_DISK from SU_RETRACT");
                   targetStepsDisk += 10;
                   stateData.enteredAt = millis();
 
@@ -134,7 +134,7 @@ void stateMachineUpdate()
                   sampleNumber++;
                   solderState = SU_ENGAGE;
                   stateData.enteredAt = millis();
-                  Serial.println("Moving to SU_ENGAGE from SU_DISK (sample/wick done)");
+                  // Serial.println("Moving to SU_ENGAGE from SU_DISK (sample/wick done)");
                 }
                 break;
               }

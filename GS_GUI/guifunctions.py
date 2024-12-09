@@ -2,15 +2,14 @@
 import tkinter
 import serial
 
-ser = serial.Serial('/dev/tty4', 38400)
-
+ser = serial.Serial('/dev/ttyUSB0', 38400)
 
 def quit():
     global tkTop, ser
     if ser.is_open:
         ser.write(bytes('Q', 'UTF-8'))
-        ser.close()
-    tkTop.destroy()
+        # ser.close()
+    # tkTop.destroy()
 
 
 #Text box for telemetry data

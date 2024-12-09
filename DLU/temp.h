@@ -15,22 +15,22 @@ void startTempSensor(){
   Wire.write(TEMP_RESET);
   int err = Wire.endTransmission();
   delay(100);
-  Serial.println(err);
+  // Serial.println(err);
   Wire.beginTransmission(TEMP_I2C_ADDRESS);
   Wire.write(TEMP_READ_SERIAL_NUMBER);
   err = Wire.endTransmission();
-  Serial.println(err);
+  // Serial.println(err);
   delay(100);
   int cnt = Wire.requestFrom(TEMP_I2C_ADDRESS, 4);
-  Serial.println(cnt);
+  // Serial.println(cnt);
   uint8_t serialNumber[4] = {};
   if (Wire.available() <= 4) {
     for (int i = 0; i < 4; i++) {
       serialNumber[i] = Wire.read();
-      Serial.print(serialNumber[i]);
-      Serial.print(' ');
+      // Serial.print(serialNumber[i]);
+      // Serial.print(' ');
     }
-    Serial.println();
+    // Serial.println();
   }
 }
 

@@ -1,5 +1,15 @@
 #include "hamming.h"
 void telemetryUpdate() {
+
+  // PROASPAT ADAUGAT
+  static int i = 0;
+  i++;
+  if (i % 2 == 0) {
+    digitalWrite(CAM_LED, HIGH);
+  } else {
+    digitalWrite(CAM_LED, LOW);
+  }
+
   //
   //  static unsigned long lastTelemetrySent = 0;
   //  unsigned long timeNow = millis();
@@ -58,6 +68,7 @@ void telemetryUpdate() {
 
   encode_hamming(&input,&output);
   Serial1.write(output.buf, 30);
+  // Serial1.write("Hello World tele\n");
 
 
   //dataLogger.write(telemetryMessage, 14);

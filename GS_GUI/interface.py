@@ -16,7 +16,8 @@ def decode_4_bits(byte):
         if (get_bit(byte, i) == 1):
             parity ^= i
     
-    print(parity)
+    if (parity != 0):
+        print("Detected error, trying to correct")
     byte ^= 1 << parity
 
     result = (get_bit(byte, 7) << 3) | (get_bit(byte, 6) << 2) | (get_bit(byte, 5) << 1) | get_bit(byte, 3)
@@ -75,65 +76,66 @@ def readFromSerial():
     SOE_State = 0
     stateMachineStatus = 0
 
+    wrong = 0
+    last = time.time_ns()
     while True:
-        last = time.time()
-        wrong = 0
-        #print("Before")
-        currentByte = ser.read(1)
-        #print("After")
+        # print("Before")
+        if (ser.in_waiting >= 1):
+            currentByte = ser.read(1)
+            # print("After")
+            # print(currentByte)
 
-        buffer.append(currentByte[0])
+            buffer.append(currentByte[0])
 
-        if (len(buffer) != 30):
-            continue
+            if (len(buffer) != 30):
+                continue
 
-        (error, msg) = try_decode(buffer)
-        if (error == DecodeResult.GOOD):
-            print("Good Message")
+            (error, msg) = try_decode(buffer)
+            if (error == DecodeResult.GOOD):
+                last = time.time_ns()
+                print("Good Message")
 
-            saveFile.write(msg)
-            saveFileText.write("New Message:")
+                saveFile.write(msg)
+                saveFileText.write("New Message:")
 
-            solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
-            saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
+                solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
+                saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
 
-            solderingCurrentTemperature = int.from_bytes(msg[4:6], byteorder='little')
-            saveFileText.write(f"solderingCurrentTemperature:{solderingCurrentTemperature},")
+                solderingCurrentTemperature = int.from_bytes(msg[4:6], byteorder='little')
+                saveFileText.write(f"solderingCurrentTemperature:{solderingCurrentTemperature},")
 
-            sampleDiscPosition = int.from_bytes(msg[6:8], byteorder='little')
-            saveFileText.write(f"sampleDiscPosition:{sampleDiscPosition},")
-            
-            feedingMechanismPosition = int.from_bytes(msg[8:10], byteorder='little')
-            saveFileText.write(f"feedingMechanismPosition:{feedingMechanismPosition},")
+                sampleDiscPosition = int.from_bytes(msg[6:8], byteorder='little')
+                saveFileText.write(f"sampleDiscPosition:{sampleDiscPosition},")
+                
+                feedingMechanismPosition = int.from_bytes(msg[8:10], byteorder='little')
+                saveFileText.write(f"feedingMechanismPosition:{feedingMechanismPosition},")
 
-            linearMotorPosition = int.from_bytes(msg[10:12],byteorder='little')
-            saveFileText.write(f"linearMotorPosition:{linearMotorPosition},")
-            
-            signalsReceived = int.from_bytes(msg[12:13], byteorder='little')
-            LO_State = signalsReceived & 1
-            saveFileText.write(f"LO_State:{LO_State},")
-            SOE_State = (signalsReceived >> 1) & 1
-            saveFileText.write(f"SOE_State:{SOE_State},")
+                linearMotorPosition = int.from_bytes(msg[10:12],byteorder='little')
+                saveFileText.write(f"linearMotorPosition:{linearMotorPosition},")
+                
+                signalsReceived = int.from_bytes(msg[12:13], byteorder='little')
+                LO_State = signalsReceived & 1
+                saveFileText.write(f"LO_State:{LO_State},")
+                SOE_State = (signalsReceived >> 1) & 1
+                saveFileText.write(f"SOE_State:{SOE_State},")
 
-            stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
-            saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
+                stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
+                saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
 
-            last = 0
-            buffer = bytearray()
-        else:
-            buffer.pop(0)
-            if (error == DecodeResult.WRONG_CHECKSUM):
-                wrong += 1
-                print("Found a corrupted message")
+                buffer = bytearray()
             else:
-                # this is expected to appear a bunch of times in short bursts (like ~30 at a time)
-                # this is because once 1 byte within a packet is corrupted which would cause either
-                # the sync check or the checksum to fail, we can expect the following attempts to decode
-                # a packet to also fail. TODO: write a better explanation
-                print("Not Sync")
+                buffer.pop(0)
+                if (error == DecodeResult.WRONG_CHECKSUM):
+                    wrong += 1
+                    print("Found a corrupted message")
+                else:
+                    # this is expected to appear a bunch of times in short bursts (like ~30 at a time)
+                    # this is because once 1 byte within a packet is corrupted which would cause either
+                    # the sync check or the checksum to fail, we can expect the following attempts to decode
+                    # a packet to also fail. TODO: write a better explanation
+                    print("Not Sync")
 
-        elapsed = time.time() - last
-        last += elapsed
+        elapsed = time.time_ns() - last
 
 
         ## TEST - nu sterge, comenteaza        
@@ -165,7 +167,14 @@ State Machine Status: {}
                 feedingMechanismPosition, linearMotorPosition, 'HIGH' if LO_State else 'LOW',
                 'HIGH' if SOE_State else 'LOW', stateMachineStatus)
 
-        since_last.config(text='Time since last packet: {0:.3f}ms'.format(elapsed/1000))
+        elapsed_ms = round(elapsed/(10**6))
+        elapsed_text = 'Time since last packet: {:5}ms'.format(elapsed_ms)
+        if (elapsed_ms > 600):
+            elapsed_text = "WARN: " + elapsed_text
+        else:
+            elapsed_text = "      " + elapsed_text
+
+        since_last.config(text=elapsed_text)
         no_errors["text"] = 'Errors: {}'.format(wrong)
 
 # label9 = 0
@@ -177,9 +186,15 @@ def inctimer():
     except:
         pass
     
-    p = threading.Timer(.01, inctimer)
-    p.start()
-    p.join()
+    while True:
+        time.sleep(.01)
+        try:
+            label9.config(text='t={0:.3f}s'.format(time.time() - starttime))
+        except:
+            pass
+    # p = threading.Timer(.01, inctimer)
+    # p.start()
+    # p.join()
 
 
 if __name__ == '__main__':

@@ -52,7 +52,8 @@ void setup() {
 
   //Linear
   linearMotor.attach(linearMotor_Pin);
-  linearMotor.write(linearMotor_extended); //departe de disk
+  // NOTE Maria
+  linearMotor.write(linearMotor_retracted); //departe de disk
 
 
   //  linearMotor.write(linearMotor_retracted);
@@ -74,10 +75,10 @@ void setup() {
 
   //Setup comms
   Serial.begin(38400);
-  Serial.println("Booting up..");
+  // Serial.println("Booting up..");
 
   Serial1.begin(38400);
-  Serial1.println("Hello Rexus");
+  // Serial1.println("Hello Rexus");
 
   pinMode(LO_Pin, INPUT);
   pinMode(SOE_Pin, INPUT);
@@ -88,7 +89,6 @@ void setup() {
     digitalWrite(CAM_LED, LOW);
     delay(500);
   }
-
 }
 
 void loop()
@@ -118,9 +118,9 @@ inline void runTask(int i)
     case 0:
       {
         telemetryUpdate();
-        Serial.print("Current Steps FM: "), Serial.println(currentStepsFM);
-        Serial.print("Target Steps FM: "), Serial.println(targetStepsFM);
-        Serial.println();
+        // Serial.print("Current Steps FM: "), Serial.println(currentStepsFM);
+        // Serial.print("Target Steps FM: "), Serial.println(targetStepsFM);
+        // Serial.println();
       }
       break;
     case 1: // temp
@@ -154,12 +154,12 @@ inline void runTask(int i)
           break;
         }
 
-        for (int j = 0; j < microsteppingRate; j++) {
-          digitalWrite(STEP_DISK, HIGH);
-          delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
-          digitalWrite(STEP_DISK, LOW);
-          delayMicroseconds(100);
-        }
+        digitalWrite(STEP_DISK, HIGH);
+        delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
+        digitalWrite(STEP_DISK, LOW);
+        delayMicroseconds(100);
+        // for (int j = 0; j < microsteppingRate; j++) {
+        // }
 
         if (DISK_DIR_CW)
           currentStepsDisk++;
@@ -182,12 +182,12 @@ inline void runTask(int i)
           break;
         }
 
-        for (int j = 0; j < microsteppingRate; j++) {
-          digitalWrite(STEP_FM, HIGH);
-          delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
-          digitalWrite(STEP_FM, LOW);
-          delayMicroseconds(100);
-        }
+        digitalWrite(STEP_FM, HIGH);
+        delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
+        digitalWrite(STEP_FM, LOW);
+        delayMicroseconds(100);
+        // for (int j = 0; j < microsteppingRate; j++) {
+        // }
 
         if (FM_DIR_CW)
           currentStepsFM++;
