@@ -92,6 +92,8 @@ void stateMachineUpdate()
                 break;
               }
             case SU_HEAT: {
+                digitalWrite(EN_FM, HIGH); //activate holding
+                digitalWrite(EN_DISK, HIGH);
                 if (millis() - stateData.enteredAt > stateData.t_SU_HEAT) {
                   //
                   if (sampleNumber % 2 == 1) { //wick
@@ -131,6 +133,8 @@ void stateMachineUpdate()
               }
             case SU_DISK: {
                 if (millis() - stateData.enteredAt > stateData.t_SU_DISK) {
+                  digitalWrite(EN_FM, LOW);
+                  digitalWrite(EN_DISK, LOW);//release holding
                   sampleNumber++;
                   solderState = SU_ENGAGE;
                   stateData.enteredAt = millis();
