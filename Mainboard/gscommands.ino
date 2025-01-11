@@ -33,9 +33,13 @@ void commsUpdate() {
           //12V DC/DC converter
           case 'P': //ON
             digitalWrite(ONOFF12,HIGH);
+            digitalWrite(EN_FM, HIGH);
+            digitalWrite(EN_DISK, HIGH);
             break;
           case 'p': //OFF
             digitalWrite(ONOFF12,LOW);
+            digitalWrite(EN_FM, LOW);
+            digitalWrite(EN_DISK, LOW);
             break;
 
           //10V DC/DC converter

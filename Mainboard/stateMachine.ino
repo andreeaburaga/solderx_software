@@ -82,6 +82,8 @@ void stateMachineUpdate()
 
           switch (solderState) {
             case SU_ENGAGE: {
+                digitalWrite(EN_FM, LOW);
+                digitalWrite(EN_DISK, LOW); //release holding torque
                 linearMotor.write(linearMotor_extended);
                 if (millis() - stateData.enteredAt > stateData.t_SU_ENGAGE) {
                   //
@@ -133,8 +135,6 @@ void stateMachineUpdate()
               }
             case SU_DISK: {
                 if (millis() - stateData.enteredAt > stateData.t_SU_DISK) {
-                  digitalWrite(EN_FM, LOW);
-                  digitalWrite(EN_DISK, LOW);//release holding
                   sampleNumber++;
                   solderState = SU_ENGAGE;
                   stateData.enteredAt = millis();
