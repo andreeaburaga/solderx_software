@@ -23,7 +23,7 @@ bool FM_DIR_CW = true;
 
 inline void runTask(int i);
 
-int32_t currentStepsDisk = 0, targetStepsDisk = 0;
+int32_t currentStepsDisk, targetStepsDisk = 0;
 int32_t currentStepsFM, targetStepsFM = 0;
 //                                    telemetrie_out, temp, fm, disk, blink, telemetrie_in,
 unsigned long previousMillis[taskNumber] = {0, 0, 0, 0, 0, 0};

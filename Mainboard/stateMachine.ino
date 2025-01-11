@@ -70,7 +70,7 @@ void stateMachineUpdate()
       }
     case 6: { //retract SU from parking slot, move disk
         linearMotor.write(linearMotor_retracted);
-        targetStepsDisk += 10;
+        targetStepsDisk += stateData.targetStepsDisk;
         Serial.println("S6");
         machineState++;
       }
@@ -123,7 +123,7 @@ void stateMachineUpdate()
                   //
                   solderState = SU_DISK;
                   // Serial.println("Moving to SU_DISK from SU_RETRACT");
-                  targetStepsDisk += 10;
+                  targetStepsDisk += stateData.targetStepsDisk;
                   stateData.enteredAt = millis();
 
                 }

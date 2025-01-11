@@ -2,7 +2,9 @@
 import tkinter
 import serial
 
-ser = serial.Serial('/dev/ttyUSB0', 38400)
+
+port_ser = input("Port USB:")
+ser = serial.Serial(port=port_ser, baudrate=38400)
 
 def quit():
     global tkTop, ser

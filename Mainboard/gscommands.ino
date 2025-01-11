@@ -58,22 +58,22 @@ void commsUpdate() {
           case 'M': //clockwise
             // sampleDisc.move(10);
             // sampleDisc.runToPosition();
-            targetStepsDisk += 10;
+            targetStepsDisk += stateData.targetStepsDisk;
             break;
           case 'm': //counterclockwise
-            targetStepsDisk -= 10;
+            targetStepsDisk -= stateData.targetStepsDisk;
             break;
 
           //FM rotate
           case 'D': //clockwise
             // feedingMechanism.move(50);
             // feedingMechanism.runToPosition();
-            targetStepsFM += 10;
+            targetStepsFM += stateData.targetStepsFM;
             break;
           case 'd': //counterclockwise
             // feedingMechanism.move(-50);
             // feedingMechanism.runToPosition();
-            targetStepsFM -= 10;
+            targetStepsFM -= stateData.targetStepsFM;
             break;
 
           //Heating soldering tip
