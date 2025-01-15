@@ -61,7 +61,7 @@ void setup() {
 
   // digitalWrite(NSLEEP_DISK, HIGH);
   // digitalWrite(EN_DISK, HIGH);
-  // digitalWrite(DIR_DISK, HIGH); debug munchen
+  // digitalWrite(DIR_DISK, HIGH); debug munich
 
   pinMode(CAM_LED, OUTPUT);
   digitalWrite(CAM_LED, LOW);

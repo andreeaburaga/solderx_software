@@ -8,8 +8,8 @@ void stateMachineUpdate()
         //data recording
         // data transmission
         //send data to dlu
-        //digitalWrite(EN_DISK, HIGH);
-        //digitalWrite(NSLEEP_DISK, HIGH);
+        digitalWrite(EN_DISK, LOW);
+        digitalWrite(NSLEEP_DISK, LOW); //munich
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
@@ -22,7 +22,7 @@ void stateMachineUpdate()
         //lastStateChange = millis();
         //digitalWrite(ONOFF12, HIGH);
         //digitalWrite(EN_DISK, HIGH);
-        //digitalWrite(NSLEEP_DISK, HIGH);
+        //digitalWrite(NSLEEP_DISK, HIGH); //munich
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
