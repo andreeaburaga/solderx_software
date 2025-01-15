@@ -55,13 +55,13 @@ void setup() {
   // NOTE Maria
   linearMotor.write(linearMotor_retracted); //departe de disk
 
-  digitalWrite(NSLEEP_FM, HIGH);
-  digitalWrite(EN_FM, HIGH);
-  digitalWrite(DIR_FM, HIGH);
+  // digitalWrite(NSLEEP_FM, HIGH);
+  // digitalWrite(EN_FM, HIGH);
+  // digitalWrite(DIR_FM, HIGH);
 
-  digitalWrite(NSLEEP_DISK, HIGH);
-  digitalWrite(EN_DISK, HIGH);
-  digitalWrite(DIR_DISK, HIGH);
+  // digitalWrite(NSLEEP_DISK, HIGH);
+  // digitalWrite(EN_DISK, HIGH);
+  // digitalWrite(DIR_DISK, HIGH); debug munchen
 
   pinMode(CAM_LED, OUTPUT);
   digitalWrite(CAM_LED, LOW);
@@ -137,7 +137,7 @@ inline void runTask(int i)
       }
     case 2: {
         // disk
-        //digitalWrite(LED_BUILTIN,HIGH);
+        break; //pentru munich
         if (currentStepsDisk < targetStepsDisk) {
           DISK_DIR_CW = true;
           digitalWrite(DIR_DISK, HIGH);

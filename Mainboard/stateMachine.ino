@@ -8,8 +8,8 @@ void stateMachineUpdate()
         //data recording
         // data transmission
         //send data to dlu
-        digitalWrite(EN_DISK, HIGH);
-        digitalWrite(NSLEEP_DISK, HIGH);
+        //digitalWrite(EN_DISK, HIGH);
+        //digitalWrite(NSLEEP_DISK, HIGH);
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
@@ -21,8 +21,8 @@ void stateMachineUpdate()
         // keep this empty, the experiment starts here
         //lastStateChange = millis();
         //digitalWrite(ONOFF12, HIGH);
-        digitalWrite(EN_DISK, HIGH);
-        digitalWrite(NSLEEP_DISK, HIGH);
+        //digitalWrite(EN_DISK, HIGH);
+        //digitalWrite(NSLEEP_DISK, HIGH);
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
@@ -82,13 +82,13 @@ void stateMachineUpdate()
       break;
     case 7: //SLC
       {
-        if (sampleNumber < 17) {
+        if (sampleNumber < 1) {
           //
 
           switch (solderState) {
             case SU_ENGAGE: {
                 digitalWrite(EN_FM, LOW);
-                digitalWrite(EN_DISK, LOW); //release holding torque
+                //digitalWrite(EN_DISK, LOW); //release holding torque
                 linearMotor.write(linearMotor_extended);
                 if (millis() - stateData.enteredAt > stateData.t_SU_ENGAGE) {
                   //
@@ -100,7 +100,7 @@ void stateMachineUpdate()
               }
             case SU_HEAT: {
                 digitalWrite(EN_FM, HIGH); //activate holding
-                digitalWrite(EN_DISK, HIGH);
+                //digitalWrite(EN_DISK, HIGH);
                 if (millis() - stateData.enteredAt > stateData.t_SU_HEAT) {
                   //
                   if (sampleNumber % 2 == 1) { //wick

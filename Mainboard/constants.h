@@ -26,7 +26,7 @@ struct solder_sm_data{
   const unsigned long t_SU_DISK = 1 * second;
   const int stepsForwardFM = 30*2;
   const int stepsBackwardFM = 10*2;
-  const int targetStepsDisk = 10*2;
+  const int targetStepsDisk = 0; //era 10*2
   const int targetStepsFM = 10*2;//motoare noi
   
 } stateData;
