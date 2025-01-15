@@ -6,7 +6,7 @@ const uint32_t second = 1000UL;
 #define solderingTemperature 300
 #define taskNumber 6
 
-#define LO_delta 50 //seconds
+#define LO_delta 20 //seconds
 
 #define microsteppingRate 1
 #define STEP_PERIOD 50 // micros , de vazut cum e cu microstepping
@@ -19,11 +19,11 @@ solder_sm solderState;
 
 struct solder_sm_data{
   unsigned long enteredAt=0;
-  const unsigned long t_SU_ENGAGE = 2 * second;
-  const unsigned long t_SU_HEAT = 2 * second;
-  const unsigned long t_SU_SOLDER = 2 * second;
-  const unsigned long t_SU_RETRACT = 3 * second;
-  const unsigned long t_SU_DISK = 1 * second;
+  const unsigned long t_SU_ENGAGE = 4 * second;
+  const unsigned long t_SU_HEAT = 6 * second;
+  const unsigned long t_SU_SOLDER = 4 * second;
+  const unsigned long t_SU_RETRACT = 6 * second;
+  const unsigned long t_SU_DISK = 2 * second;
   const int stepsForwardFM = 30*2;
   const int stepsBackwardFM = 10*2;
   const int targetStepsDisk = 0; //era 10*2
@@ -33,7 +33,7 @@ struct solder_sm_data{
 
 //Motors
 const uint8_t linearMotor_Pin = PWM_MOTOR;
-const uint8_t linearMotor_extended = 84;   //motor is soldering 6 units/mm
+const uint8_t linearMotor_extended = 86;   //motor is soldering 6 units/mm
 const uint8_t linearMotor_retracted =  72;   //motor is retracted
 
 const uint8_t sampleDisc_stepPin = STEP_DISK;

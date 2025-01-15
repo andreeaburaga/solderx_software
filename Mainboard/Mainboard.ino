@@ -54,7 +54,7 @@ void setup() {
   //Linear
   linearMotor.attach(linearMotor_Pin);
   // NOTE Maria
-  //linearMotor.write(linearMotor_retracted); //departe de disk
+  linearMotor.write(linearMotor_retracted); //departe de disk
 
   // digitalWrite(NSLEEP_FM, HIGH);
   // digitalWrite(EN_FM, HIGH);

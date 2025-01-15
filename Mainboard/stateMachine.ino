@@ -24,6 +24,7 @@ void stateMachineUpdate()
         //digitalWrite(EN_DISK, HIGH);
         //digitalWrite(NSLEEP_DISK, HIGH); //munich
         //functie
+        linearMotor.write(linearMotor_extended);
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
         // Serial.println("S1");
@@ -47,10 +48,11 @@ void stateMachineUpdate()
         }
         break;
       }
-    case 4: //LO + LO_DELTA s
+    case 4: //LO + 50s
       // wait for LO signal
       {
         if (millis() - LO_millis > LO_delta * second ) {
+          linearMotor.write(linearMotor_retracted);
           if (armedState == SYSTEM_ARMED_HOT)
             targetTemperature = solderingTemperature;
           else
@@ -74,7 +76,6 @@ void stateMachineUpdate()
         break;
       }
     case 6: { //retract SU from parking slot, move disk
-        linearMotor.write(linearMotor_retracted);
         targetStepsDisk += stateData.targetStepsDisk;
         Serial.println("S6");
         machineState++;
