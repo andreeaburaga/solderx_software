@@ -47,7 +47,7 @@ void stateMachineUpdate()
         }
         break;
       }
-    case 4: //LO + 50s
+    case 4: //LO + LO_DELTA s
       // wait for LO signal
       {
         if (millis() - LO_millis > LO_delta * second ) {
