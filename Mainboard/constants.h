@@ -9,7 +9,7 @@ const uint32_t second = 1000UL;
 #define LO_delta 5 //seconds
 
 #define microsteppingRate 1
-#define STEP_PERIOD 10 // micros , de vazut cum e cu microstepping
+#define STEP_PERIOD 50 // micros , de vazut cum e cu microstepping
 
 
 enum solder_sm{
@@ -24,10 +24,10 @@ struct solder_sm_data{
   const unsigned long t_SU_SOLDER = 2 * second;
   const unsigned long t_SU_RETRACT = 3 * second;
   const unsigned long t_SU_DISK = 1 * second;
-  const int stepsForwardFM = 30;
-  const int stepsBackwardFM = 10;
-  const int targetStepsDisk = 10;
-  const int targetStepsFM = 10;
+  const int stepsForwardFM = 30*2;
+  const int stepsBackwardFM = 10*2;
+  const int targetStepsDisk = 10*2;
+  const int targetStepsFM = 10*2;//motoare noi
   
 } stateData;
 

@@ -12,12 +12,12 @@
 
 void setup() {
   // put your setup code here, to run once:
-  digitalWrite(STEP_FM,HIGH);
+  //digitalWrite(STEP_FM,HIGH);
   digitalWrite(NSLEEP_FM,HIGH);
   digitalWrite(EN_FM,HIGH);
   digitalWrite(DIR_FM,HIGH);
 
-  digitalWrite(STEP_DISK,HIGH);
+  //digitalWrite(STEP_DISK,HIGH);
   digitalWrite(NSLEEP_DISK,HIGH);
   digitalWrite(EN_DISK,HIGH);
   digitalWrite(DIR_DISK,HIGH);
@@ -32,6 +32,6 @@ void loop() {
   digitalWrite(STEP_DISK,LOW);
   digitalWrite(STEP_FM,LOW);
   delayMicroseconds(500);
-  
+//  delay(1);
 
 }

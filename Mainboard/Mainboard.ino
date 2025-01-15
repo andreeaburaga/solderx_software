@@ -55,16 +55,13 @@ void setup() {
   // NOTE Maria
   linearMotor.write(linearMotor_retracted); //departe de disk
 
+  digitalWrite(NSLEEP_FM, HIGH);
+  digitalWrite(EN_FM, HIGH);
+  digitalWrite(DIR_FM, HIGH);
 
-  //  linearMotor.write(linearMotor_retracted);
-  //  delay(3000);
-  // sampleDisc.setMaxSpeed(100.0);
-  // sampleDisc.setAcceleration(50.0);
-  // sampleDisc.setCurrentPosition(0);
-
-  // feedingMechanism.setMaxSpeed(100.0);
-  // feedingMechanism.setAcceleration(50.0);
-  // feedingMechanism.setCurrentPosition(0);
+  digitalWrite(NSLEEP_DISK, HIGH);
+  digitalWrite(EN_DISK, HIGH);
+  digitalWrite(DIR_DISK, HIGH);
 
   pinMode(CAM_LED, OUTPUT);
   digitalWrite(CAM_LED, LOW);
@@ -83,30 +80,29 @@ void setup() {
   pinMode(LO_Pin, INPUT);
   pinMode(SOE_Pin, INPUT);
 
-  for (int i = 0; i < 4; i++) {
-    digitalWrite(CAM_LED, HIGH);
-    delay(500);
-    digitalWrite(CAM_LED, LOW);
-    delay(500);
-  }
+  //  for (int i = 0; i < 4; i++) {
+  //    digitalWrite(CAM_LED, HIGH);
+  //    delay(500);
+  //    digitalWrite(CAM_LED, LOW);
+  //    delay(500);
+  //  }
+  //  delay(2000);
 }
 
 void loop()
 {
-  ms = millis();
-
-  for (int i = 0; i < taskNumber; i++)
-  {
-    if (ms - previousMillis[i] >= deltaMillis[i])
+    ms = millis();
+  
+    for (int i = 0; i < taskNumber; i++)
     {
-      runTask(i);
-      previousMillis[i] = ms;
+      if (ms - previousMillis[i] >= deltaMillis[i])
+      {
+        runTask(i);
+        previousMillis[i] = ms;
+      }
     }
-  }
-  stateMachineUpdate();
-  //  targetStepsFM = 10000;
-  //  targetStepsDisk = 10000;
-  //  //Serial.println(ms);
+    stateMachineUpdate();
+//  
 }
 
 uint8_t count = 0;
@@ -124,22 +120,22 @@ inline void runTask(int i)
       }
       break;
     case 1: // temp
-    {
-      if(count == 0){
-        digitalWrite(PWM_DC,LOW);
-      }
-      if(count == 1){
-        calculateTemperature();
-        if (currentTemperature < targetTemperature)
-          digitalWrite(PWM_DC, HIGH);
-        else
+      {
+        if (count == 0) {
           digitalWrite(PWM_DC, LOW);
+        }
+        if (count == 1) {
+          calculateTemperature();
+          if (currentTemperature < targetTemperature)
+            digitalWrite(PWM_DC, HIGH);
+          else
+            digitalWrite(PWM_DC, LOW);
+        }
+        count++;
+        count = count % 6;
+        break;
       }
-      count++;
-      count = count % 6;
-      break;
-    }
-    case 2:{
+    case 2: {
         // disk
         //digitalWrite(LED_BUILTIN,HIGH);
         if (currentStepsDisk < targetStepsDisk) {
@@ -158,8 +154,6 @@ inline void runTask(int i)
         delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
         digitalWrite(STEP_DISK, LOW);
         delayMicroseconds(100);
-        // for (int j = 0; j < microsteppingRate; j++) {
-        // }
 
         if (DISK_DIR_CW)
           currentStepsDisk++;
@@ -186,8 +180,6 @@ inline void runTask(int i)
         delayMicroseconds(100);    // Control step speed (500us pulse width for 1kHz frequency)
         digitalWrite(STEP_FM, LOW);
         delayMicroseconds(100);
-        // for (int j = 0; j < microsteppingRate; j++) {
-        // }
 
         if (FM_DIR_CW)
           currentStepsFM++;

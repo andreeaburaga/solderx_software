@@ -3,7 +3,8 @@ import tkinter
 import serial
 
 
-port_ser = input("Port USB:")
+#port_ser = input("Port USB:")
+port_ser = 'COM7'
 ser = serial.Serial(port=port_ser, baudrate=38400)
 
 def quit():
