@@ -6,7 +6,7 @@ const uint32_t second = 1000UL;
 #define solderingTemperature 300
 #define taskNumber 6
 
-#define LO_delta 5 //seconds
+#define LO_delta 50 //seconds
 
 #define microsteppingRate 1
 #define STEP_PERIOD 50 // micros , de vazut cum e cu microstepping

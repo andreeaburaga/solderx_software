@@ -21,11 +21,13 @@ void commsUpdate() {
           //Camera LED control
           case 'L':
             digitalWrite(CAM_LED, HIGH);
+            digitalWrite(CAM_EN, HIGH);
             //Serial.println("Camera Led ON");
             //dataLogger.println("Camera Led ON");
             break;
           case 'l':
             digitalWrite(CAM_LED, LOW);
+            digitalWrite(CAM_EN, LOW);
             //Serial.println("Camera Led OFF");
             //dataLogger.println("Camera Led OFF");
             break;
