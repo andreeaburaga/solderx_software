@@ -190,6 +190,7 @@ inline void runTask(int i)
       }
     case 4:
       {
+        break;
         if (valoare_led) digitalWrite(CAM_LED, HIGH), valoare_led = 0;
         else digitalWrite(CAM_LED, LOW), valoare_led = 1;
         break;
