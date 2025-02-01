@@ -30,6 +30,13 @@ void commsUpdate() {
             //dataLogger.println("Camera Led OFF");
             break;
 
+          case 'C':
+            digitalWrite(CAM_EN, HIGH);
+            break;
+          case 'c':
+            digitalWrite(CAM_EN, LOW);
+            break;
+
           //12V DC/DC converter
           case 'P': //ON
             digitalWrite(ONOFF12,HIGH);

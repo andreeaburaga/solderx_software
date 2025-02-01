@@ -38,6 +38,10 @@ int sampleDone = 1;
 int sampleState = 0;
 int valoare_led = 1;
 void setup() {
+  //DCDC
+  pinMode(ONOFF12, OUTPUT);
+  pinMode(ONOFF10, OUTPUT);
+
   //Sample disk
   pinMode(STEP_DISK, OUTPUT);
   pinMode(DIR_DISK, OUTPUT);
@@ -64,6 +68,9 @@ void setup() {
   digitalWrite(EN_DISK, HIGH);
   digitalWrite(DIR_DISK, HIGH);
 
+  //Camera
+  pinMode(CAM_EN, OUTPUT);
+  digitalWrite(CAM_EN, LOW);
   pinMode(CAM_LED, OUTPUT);
   digitalWrite(CAM_LED, LOW);
 

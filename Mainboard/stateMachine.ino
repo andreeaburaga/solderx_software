@@ -20,7 +20,7 @@ void stateMachineUpdate()
       {
         // keep this empty, the experiment starts here
         //lastStateChange = millis();
-        //digitalWrite(ONOFF12, HIGH);
+        digitalWrite(ONOFF12, HIGH);
         digitalWrite(EN_DISK, HIGH);
         digitalWrite(NSLEEP_DISK, HIGH);
         //functie
@@ -31,7 +31,7 @@ void stateMachineUpdate()
         break;
       }
     case 2: {
-        //digitalWrite(ONOFF10, HIGH);
+        digitalWrite(ONOFF10, HIGH);
         // Serial.println("S2");
         machineState++;
         break;
