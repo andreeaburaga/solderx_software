@@ -6,6 +6,7 @@ import random
 import os
 from enum import Enum
 from typing import Tuple
+import csv
 
 def get_bit(byte, bit):
     return (byte & (1 << bit)) >> bit
@@ -66,116 +67,128 @@ def readFromSerial():
     buffer = bytearray()
     saveFile = open("log_data.bin", "wb")
     saveFileText = open("log_data_text.txt", "wt")
+    with open('date.csv','w') as csvFile:
+        writer = csv.writer(csvFile)
+        solderingTargetTemperature = 0
+        solderingCurrentTemperature = 0
+        sampleDiscPosition = 0
+        feedingMechanismPosition = 0
+        linearMotorPosition = 0
+        LO_State = 0
+        SOE_State = 0
+        stateMachineStatus = 0
 
-    solderingTargetTemperature = 0
-    solderingCurrentTemperature = 0
-    sampleDiscPosition = 0
-    feedingMechanismPosition = 0
-    linearMotorPosition = 0
-    LO_State = 0
-    SOE_State = 0
-    stateMachineStatus = 0
-
-    wrong = 0
-    last = time.time_ns()
-    while True:
+        wrong = 0
+        last = time.time_ns()
+        while True:
         # print("Before")
-        if (ser.in_waiting >= 1):
-            currentByte = ser.read(1)
-            # print("After")
-            # print(currentByte)
+            if (ser.in_waiting >= 1):
+                currentByte = ser.read(1)
+                # print("After")
+                # print(currentByte)
 
-            buffer.append(currentByte[0])
+                buffer.append(currentByte[0])
 
-            if (len(buffer) != 30):
-                continue
+                if (len(buffer) != 30):
+                    continue
 
-            (error, msg) = try_decode(buffer)
-            if (error == DecodeResult.GOOD):
-                last = time.time_ns()
-                print("Good Message")
+                (error, msg) = try_decode(buffer)
+                if (error == DecodeResult.GOOD):
+                    csv_row = ""
+                    last = time.time_ns()
+                    print("Good Message")
 
-                saveFile.write(msg)
-                saveFileText.write("New Message:")
+                    saveFile.write(msg)
+                    saveFileText.write("New Message:")
 
-                solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
-                saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
+                    solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
+                    saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
+                    csv_row.append(solderingTargetTemperature)
 
-                solderingCurrentTemperature = int.from_bytes(msg[4:6], byteorder='little')
-                saveFileText.write(f"solderingCurrentTemperature:{solderingCurrentTemperature},")
+                    solderingCurrentTemperature = int.from_bytes(msg[4:6], byteorder='little')
+                    saveFileText.write(f"solderingCurrentTemperature:{solderingCurrentTemperature},")
+                    csv_row.append(solderingCurrentTemperature)
 
-                sampleDiscPosition = int.from_bytes(msg[6:8], byteorder='little')
-                saveFileText.write(f"sampleDiscPosition:{sampleDiscPosition},")
-                
-                feedingMechanismPosition = int.from_bytes(msg[8:10], byteorder='little')
-                saveFileText.write(f"feedingMechanismPosition:{feedingMechanismPosition},")
+                    sampleDiscPosition = int.from_bytes(msg[6:8], byteorder='little')
+                    saveFileText.write(f"sampleDiscPosition:{sampleDiscPosition},")
+                    csv_row.append(sampleDiscPosition)
+                    
+                    feedingMechanismPosition = int.from_bytes(msg[8:10], byteorder='little')
+                    saveFileText.write(f"feedingMechanismPosition:{feedingMechanismPosition},")
+                    csv_row.append(feedingMechanismPosition)
 
-                linearMotorPosition = int.from_bytes(msg[10:12],byteorder='little')
-                saveFileText.write(f"linearMotorPosition:{linearMotorPosition},")
-                
-                signalsReceived = int.from_bytes(msg[12:13], byteorder='little')
-                LO_State = signalsReceived & 1
-                saveFileText.write(f"LO_State:{LO_State},")
-                SOE_State = (signalsReceived >> 1) & 1
-                saveFileText.write(f"SOE_State:{SOE_State},")
+                    linearMotorPosition = int.from_bytes(msg[10:12],byteorder='little')
+                    saveFileText.write(f"linearMotorPosition:{linearMotorPosition},")
+                    csv_row.append(linearMotorPosition)
+                    
+                    signalsReceived = int.from_bytes(msg[12:13], byteorder='little')
+                    LO_State = signalsReceived & 1
+                    saveFileText.write(f"LO_State:{LO_State},")
+                    csv_row.append(LO_State)
 
-                stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
-                saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
+                    SOE_State = (signalsReceived >> 1) & 1
+                    saveFileText.write(f"SOE_State:{SOE_State},")
+                    csv_row.append(SOE_State)
 
-                buffer = bytearray()
-            else:
-                buffer.pop(0)
-                if (error == DecodeResult.WRONG_CHECKSUM):
-                    wrong += 1
-                    print("Found a corrupted message")
+                    stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
+                    saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
+                    csv_row.append(stateMachineStatus)
+                    writer.writerow(csv_row)
+
+                    buffer = bytearray()
                 else:
-                    # this is expected to appear a bunch of times in short bursts (like ~30 at a time)
-                    # this is because once 1 byte within a packet is corrupted which would cause either
-                    # the sync check or the checksum to fail, we can expect the following attempts to decode
-                    # a packet to also fail. TODO: write a better explanation
-                    print("Not Sync")
+                    buffer.pop(0)
+                    if (error == DecodeResult.WRONG_CHECKSUM):
+                        wrong += 1
+                        print("Found a corrupted message")
+                    else:
+                        # this is expected to appear a bunch of times in short bursts (like ~30 at a time)
+                        # this is because once 1 byte within a packet is corrupted which would cause either
+                        # the sync check or the checksum to fail, we can expect the following attempts to decode
+                        # a packet to also fail. TODO: write a better explanation
+                        print("Not Sync")
 
-        elapsed = time.time_ns() - last
+            elapsed = time.time_ns() - last
 
 
-        ## TEST - nu sterge, comenteaza        
-        # solderingTargetTemperature = 250
-        # solderingCurrentTemperature = 200 + int(random.random()*5)
-        # sampleDiscPosition = 10
-        # feedingMechanismPosition = 3
-        # linearMotorPosition = 4
-        # signalsReceived = 5
-        # stateMachineStatus = 6
-        # checksum = 0
-        # zeroEndedString = 0
-        # LO_State = 1
-        # SOE_State = 0
-        # END TEST
+            ## TEST - nu sterge, comenteaza        
+            # solderingTargetTemperature = 250
+            # solderingCurrentTemperature = 200 + int(random.random()*5)
+            # sampleDiscPosition = 10
+            # feedingMechanismPosition = 3
+            # linearMotorPosition = 4
+            # signalsReceived = 5
+            # stateMachineStatus = 6
+            # checksum = 0
+            # zeroEndedString = 0
+            # LO_State = 1
+            # SOE_State = 0
+            # END TEST
 
-        # textul asta trebuie sa fie fara indenturi, altfel apar si in textbox
-        textbox["text"] = ''' 
-Time: {} s
-Soldering Target Temperature: {} °C
-Soldering Current Temperature: {} °C
-Sample Disc Position: {}
-Feeding Mechanism Position: {}
-Linear Motor Position: {}
-LO_Pin State: {}
-SOE_Pin State: {}
-State Machine Status: {}
-'''.format(int((time.time() - starttime) * 1000)/1000, solderingTargetTemperature, solderingCurrentTemperature, sampleDiscPosition, 
-                feedingMechanismPosition, linearMotorPosition, 'HIGH' if LO_State else 'LOW',
-                'HIGH' if SOE_State else 'LOW', stateMachineStatus)
+            # textul asta trebuie sa fie fara indenturi, altfel apar si in textbox
+            textbox["text"] = ''' 
+    Time: {} s
+    Soldering Target Temperature: {} °C
+    Soldering Current Temperature: {} °C
+    Sample Disc Position: {}
+    Feeding Mechanism Position: {}
+    Linear Motor Position: {}
+    LO_Pin State: {}
+    SOE_Pin State: {}
+    State Machine Status: {}
+    '''.format(int((time.time() - starttime) * 1000)/1000, solderingTargetTemperature, solderingCurrentTemperature, sampleDiscPosition, 
+                    feedingMechanismPosition, linearMotorPosition, 'HIGH' if LO_State else 'LOW',
+                    'HIGH' if SOE_State else 'LOW', stateMachineStatus)
 
-        elapsed_ms = round(elapsed/(10**6))
-        elapsed_text = 'Time since last packet: {:5}ms'.format(elapsed_ms)
-        if (elapsed_ms > 600):
-            elapsed_text = "WARN: " + elapsed_text
-        else:
-            elapsed_text = "      " + elapsed_text
+            elapsed_ms = round(elapsed/(10**6))
+            elapsed_text = 'Time since last packet: {:5}ms'.format(elapsed_ms)
+            if (elapsed_ms > 600):
+                elapsed_text = "WARN: " + elapsed_text
+            else:
+                elapsed_text = "      " + elapsed_text
 
-        since_last.config(text=elapsed_text)
-        no_errors["text"] = 'Errors: {}'.format(wrong)
+            since_last.config(text=elapsed_text)
+            no_errors["text"] = 'Errors: {}'.format(wrong)
 
 # label9 = 0
 
