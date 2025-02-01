@@ -94,7 +94,7 @@ def readFromSerial():
 
                 (error, msg) = try_decode(buffer)
                 if (error == DecodeResult.GOOD):
-                    csv_row = ""
+                    csv_row = str("")
                     last = time.time_ns()
                     print("Good Message")
 
@@ -103,36 +103,36 @@ def readFromSerial():
 
                     solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
                     saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
-                    csv_row.append(solderingTargetTemperature)
+                    csv_row+=str(solderingTargetTemperature)
 
                     solderingCurrentTemperature = int.from_bytes(msg[4:6], byteorder='little')
                     saveFileText.write(f"solderingCurrentTemperature:{solderingCurrentTemperature},")
-                    csv_row.append(solderingCurrentTemperature)
+                    csv_row+=str(solderingCurrentTemperature)
 
                     sampleDiscPosition = int.from_bytes(msg[6:8], byteorder='little')
                     saveFileText.write(f"sampleDiscPosition:{sampleDiscPosition},")
-                    csv_row.append(sampleDiscPosition)
+                    csv_row+=str(sampleDiscPosition)
                     
                     feedingMechanismPosition = int.from_bytes(msg[8:10], byteorder='little')
                     saveFileText.write(f"feedingMechanismPosition:{feedingMechanismPosition},")
-                    csv_row.append(feedingMechanismPosition)
+                    csv_row+=str(feedingMechanismPosition)
 
                     linearMotorPosition = int.from_bytes(msg[10:12],byteorder='little')
                     saveFileText.write(f"linearMotorPosition:{linearMotorPosition},")
-                    csv_row.append(linearMotorPosition)
+                    csv_row+=str(linearMotorPosition)
                     
                     signalsReceived = int.from_bytes(msg[12:13], byteorder='little')
                     LO_State = signalsReceived & 1
                     saveFileText.write(f"LO_State:{LO_State},")
-                    csv_row.append(LO_State)
+                    csv_row+=str(LO_State)
 
                     SOE_State = (signalsReceived >> 1) & 1
                     saveFileText.write(f"SOE_State:{SOE_State},")
-                    csv_row.append(SOE_State)
+                    csv_row+=str(SOE_State)
 
                     stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
                     saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
-                    csv_row.append(stateMachineStatus)
+                    csv_row+=str(stateMachineStatus)
                     writer.writerow(csv_row)
 
                     buffer = bytearray()
