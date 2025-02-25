@@ -72,7 +72,7 @@ void setup()
   // Serial.println(currentFile);
 }
 
-void write_to_buffer(char *buf_out, buffer_hamming *buf_out)
+void write_to_SD(char *buf_out, buffer_hamming *buf_out)
 {
   int solderingTargetTemperature = (hamming_out.buf[3] << 8) | hamming_out.buf[2];
   int solderingCurrentTemperature = (hamming_out.buf[5] << 8) | hamming_out.buf[4];
@@ -86,75 +86,79 @@ void write_to_buffer(char *buf_out, buffer_hamming *buf_out)
   char buf[100] = "\0";
   char startMessage[50] = "\nPackage Start\n";
   strcat(buf_out, startMessage);
+  dataFile.print(startMessage);
 
   // Serial.println("Writing to file\n");
-  snprintf(buf, sizeof(buf), "Millis:%d\n", millis());
-  strcat(buf_out, buf);
+  //snprintf(buf, sizeof(buf), "Millis:%d\n", millis());
+  //strcat(buf_out, buf);
 
-  snprintf(buf, sizeof(buf), "SolderingTagetTemp:%d\n", solderingTargetTemperature);
-  strcat(buf_out, buf);
-  // dataFile.print(F("solderingTargetTemperature:"));
-  // dataFile.println(solderingTargetTemperature);
+  //snprintf(buf, sizeof(buf), "SolderingTagetTemp:%d\n", solderingTargetTemperature);
+  //strcat(buf_out, buf);
+   dataFile.print(F("solderingTargetTemperature:"));
+   dataFile.println(solderingTargetTemperature);
 
-  snprintf(buf, sizeof(buf), "SolderingCurrentTemp:%d\n", solderingCurrentTemperature);
-  strcat(buf_out, buf);
-  // dataFile.print(F("solderingCurrentTemperature:"));
-  // dataFile.println(solderingCurrentTemperature);
+  //snprintf(buf, sizeof(buf), "SolderingCurrentTemp:%d\n", solderingCurrentTemperature);
+  //strcat(buf_out, buf);
+   dataFile.print(F("solderingCurrentTemperature:"));
+   dataFile.println(solderingCurrentTemperature);
 
-  snprintf(buf, sizeof(buf), "SampleDiscPos:%d\n", sampleDiscPosition);
-  strcat(buf_out, buf);
-  // dataFile.print(F("sampleDiscPosition:"));
-  // dataFile.println(sampleDiscPosition);
+  //snprintf(buf, sizeof(buf), "SampleDiscPos:%d\n", sampleDiscPosition);
+  //strcat(buf_out, buf);
+   dataFile.print(F("sampleDiscPosition:"));
+   dataFile.println(sampleDiscPosition);
 
   // delay(50);
-  snprintf(buf, sizeof(buf), "FeedingPos:%d\n", feedingMechanismPosition);
-  strcat(buf_out, buf);
-  // dataFile.print(F("feedingMechanismPosition:"));
-  // dataFile.println(feedingMechanismPosition);
+  //snprintf(buf, sizeof(buf), "FeedingPos:%d\n", feedingMechanismPosition);
+  //strcat(buf_out, buf);
+   dataFile.print(F("feedingMechanismPosition:"));
+   dataFile.println(feedingMechanismPosition);
 
-  snprintf(buf, sizeof(buf), "LinearMotorPos:%d\n", linearMotorPosition);
-  strcat(buf_out, buf);
-  // dataFile.print(F("linearMotorPosition:"));
-  // dataFile.println(linearMotorPosition);
+  //snprintf(buf, sizeof(buf), "LinearMotorPos:%d\n", linearMotorPosition);
+  //strcat(buf_out, buf);
+   dataFile.print(F("linearMotorPosition:"));
+   dataFile.println(linearMotorPosition);
 
-  snprintf(buf, sizeof(buf), "LO_State:%d\n", LO_State);
-  strcat(buf_out, buf);
-  // dataFile.print(F("LO_State:"));
-  // dataFile.println(LO_State);
+  //snprintf(buf, sizeof(buf), "LO_State:%d\n", LO_State);
+  //strcat(buf_out, buf);
+   dataFile.print(F("LO_State:"));
+   dataFile.println(LO_State);
   // delay(50);
 
-  snprintf(buf, sizeof(buf), "SOE_State:%d\n", SOE_State);
-  strcat(buf_out, buf);
-  // dataFile.print(F("SOE_State:"));
-  // dataFile.println(SOE_State);
+  //snprintf(buf, sizeof(buf), "SOE_State:%d\n", SOE_State);
+  //strcat(buf_out, buf);
+   dataFile.print(F("SOE_State:"));
+   dataFile.println(SOE_State);
 
-  snprintf(buf, sizeof(buf), "StateMachine:%d\n", stateMachineStatus);
-  strcat(buf_out, buf);
-  // dataFile.print("stateMachineStatus:");
-  // dataFile.println(stateMachineStatus);
+  //snprintf(buf, sizeof(buf), "StateMachine:%d\n", stateMachineStatus);
+  //strcat(buf_out, buf);
+   dataFile.print(F("stateMachineStatus:"));
+   dataFile.println(stateMachineStatus);
 
-  snprintf(buf, sizeof(buf), "\nSensorData:\n");
-  strcat(buf_out, buf);
-  // dataFile.println(F("SensorData"));
+  // snprintf(buf, sizeof(buf), "\nSensorData:\n");
+  // strcat(buf_out, buf);
+   dataFile.println(F("SensorData"));
   // Serial.println(F("Writing to file6"));
 
-  snprintf(buf, sizeof(buf), "Temp IC3:%d\n", T);
-  strcat(buf_out, buf);
-  // dataFile.print(F("Temp IC3:"));
-  // dataFile.println(T);
+  //snprintf(buf, sizeof(buf), "Temp IC3:%d\n", T);
+  //strcat(buf_out, buf);
+   dataFile.print(F("Temp IC3:"));
+   dataFile.println(T);
 
-  snprintf(buf, sizeof(buf), "Temp MS5837:%d\n", dlu_sensor.temperature()); // dlu_sensor.temperature()
-  strcat(buf_out, buf);
+  // snprintf(buf, sizeof(buf), "Temp MS5837:%d\n", dlu_sensor.temperature()); // dlu_sensor.temperature()
+  // strcat(buf_out, buf);
 
-  snprintf(buf, sizeof(buf), "Pressure MS5837:%d\n", dlu_sensor.pressure()); // dlu_sensor.pressure()
-  strcat(buf_out, buf);
-
-  // dataFile.println(dlu_sensor.pressure());
+  // snprintf(buf, sizeof(buf), "Pressure MS5837:%d\n", dlu_sensor.pressure()); // dlu_sensor.pressure()
+  // strcat(buf_out, buf);
+  dataFile.print(F("Temp MS5837:"));
+  dataFile.println(dlu_sensor.temperature());
+   
+  dataFile.print(F("Pressure MS5837:"));
+  dataFile.println(dlu_sensor.pressure());
 
   // Serial.println(F("Writing to file"));
-  // dataFile.println(millis());
-  // dataFile.println(F("Mainboard Data"));
-  // Serial.println(F("Writing to file2"));
+  dataFile.print(F("millis:"));
+  dataFile.println(millis());
+   dataFile.println();
 }
 
 void loop()
