@@ -166,7 +166,7 @@ void loop()
   // MS5837 printing
   dlu_sensor.read();
   delay(20);
-  char bufferSD[256];
+  char bufferSD[512];
   // Serial.println(dlu_sensor.temperature());
   // Serial.println(dlu_sensor.pressure());
 
