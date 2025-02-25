@@ -226,9 +226,8 @@ void loop()
     dataFile = SD.open(currentFile, FILE_WRITE);
     if (dataFile)
     {
-      write_to_buffer(bufferSD,hamming_out);
+      write_to_SD(bufferSD,hamming_out);
       //TODO: write buffer to SD
-      dataFile.write(bufferSD);
       dataFile.close();
       delay(100);
     }
