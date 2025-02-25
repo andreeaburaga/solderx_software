@@ -72,7 +72,7 @@ void setup()
   // Serial.println(currentFile);
 }
 
-void write_to_sd(char *buf_out, buffer_hamming *buf_out)
+void write_to_buffer(char *buf_out, buffer_hamming *buf_out)
 {
   int solderingTargetTemperature = (hamming_out.buf[3] << 8) | hamming_out.buf[2];
   int solderingCurrentTemperature = (hamming_out.buf[5] << 8) | hamming_out.buf[4];
@@ -87,9 +87,8 @@ void write_to_sd(char *buf_out, buffer_hamming *buf_out)
   char startMessage[50] = "\nPackage Start\n";
   strcat(buf_out, startMessage);
 
-  int millis_rnd = 8484;
   // Serial.println("Writing to file\n");
-  snprintf(buf, sizeof(buf), "Millis:%d\n", millis_rnd);
+  snprintf(buf, sizeof(buf), "Millis:%d\n", millis());
   strcat(buf_out, buf);
 
   snprintf(buf, sizeof(buf), "SolderingTagetTemp:%d\n", solderingTargetTemperature);
@@ -144,10 +143,10 @@ void write_to_sd(char *buf_out, buffer_hamming *buf_out)
   // dataFile.print(F("Temp IC3:"));
   // dataFile.println(T);
 
-  snprintf(buf, sizeof(buf), "Temp MS5837:%d\n", 5); // dlu_sensor.temperature()
+  snprintf(buf, sizeof(buf), "Temp MS5837:%d\n", dlu_sensor.temperature()); // dlu_sensor.temperature()
   strcat(buf_out, buf);
 
-  snprintf(buf, sizeof(buf), "Pressure MS5837:%d\n", 20); // dlu_sensor.pressure()
+  snprintf(buf, sizeof(buf), "Pressure MS5837:%d\n", dlu_sensor.pressure()); // dlu_sensor.pressure()
   strcat(buf_out, buf);
 
   // dataFile.println(dlu_sensor.pressure());
@@ -220,11 +219,12 @@ void loop()
     };
     decode_hamming(&hamming_in, &hamming_out);
 
-    dataFile = SD.open("test.txt", FILE_WRITE);
+    dataFile = SD.open(currentFile, FILE_WRITE);
     if (dataFile)
     {
-      write_to_sd(bufferSD,hamming_out);
+      write_to_buffer(bufferSD,hamming_out);
       //TODO: write buffer to SD
+      dataFile.write(bufferSD);
       dataFile.close();
       delay(100);
     }
