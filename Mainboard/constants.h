@@ -28,13 +28,14 @@ struct solder_sm_data{
   const int stepsBackwardFM = 10*2;
   const int targetStepsDisk = 10*2;
   const int targetStepsFM = 10*2;//motoare noi
+  const unsigned long soeMotorDelay = 2*second;
   
 } stateData;
 
 //Motors
 const uint8_t linearMotor_Pin = PWM_MOTOR;
-const uint8_t linearMotor_extended = 84;   //motor is soldering 6 units/mm
-const uint8_t linearMotor_retracted =  72;   //motor is retracted
+const uint8_t linearMotor_extended = 60;   //motor is soldering 6 units/mm -TODO: 84
+const uint8_t linearMotor_retracted = 0;   //motor is retracted -TODO: 72
 
 const uint8_t sampleDisc_stepPin = STEP_DISK;
 const uint8_t sampleDisc_dirPin = DIR_DISK;

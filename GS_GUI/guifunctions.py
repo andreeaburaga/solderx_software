@@ -4,7 +4,7 @@ import serial
 
 
 #port_ser = input("Port USB:")
-port_ser = 'COM7'
+port_ser = 'COM5'
 ser = serial.Serial(port=port_ser, baudrate=38400)
 
 def quit():

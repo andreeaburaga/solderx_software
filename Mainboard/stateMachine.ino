@@ -1,7 +1,8 @@
 void stateMachineUpdate()
 {
   //static unsigned long lastStateChange = 0;
-  
+   static uint32_t soeTime = 0;
+
   switch (machineState)
   {
     case 0: {
@@ -13,6 +14,7 @@ void stateMachineUpdate()
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
+
       }
       break;
 
@@ -67,19 +69,28 @@ void stateMachineUpdate()
       {
         if (digitalRead(SOE) == 0)
         {
-          //lastStateChange = millis();
+          linearMotor.write(linearMotor_retracted);
+          soeTime = millis();
           Serial.println("S5");
+          targetStepsDisk += stateData.targetStepsDisk;
           machineState++;
         }
         break;
       }
-    case 6: { //retract SU from parking slot, move disk
-        linearMotor.write(linearMotor_retracted);
-        targetStepsDisk += stateData.targetStepsDisk;
-        Serial.println("S6");
-        machineState++;
+    case 6:
+      {
+        if(millis() - soeTime > stateData.soeMotorDelay)
+        {
+          machineState++;
+        }
+        break;
       }
-      break;
+    // case 7: { //retract SU from parking slot, move disk
+    //     targetStepsDisk += stateData.targetStepsDisk;
+    //     Serial.println("S6");
+    //     machineState++;
+    //     break;
+    //   }
     case 7: //SLC
       {
         if (sampleNumber < 17) {
@@ -155,6 +166,7 @@ void stateMachineUpdate()
         break;
       }
     case 8:
+      linearMotor.write(linearMotor_extended);
       disarmExperiment();
       break;
     default:
@@ -172,6 +184,8 @@ void armExperiment(uint8_t state) {
   targetTemperature = 0;
   machineState = 1;
   armedState = state;
+  linearMotor.write(linearMotor_extended);
+
 }
 
 void disarmExperiment() {

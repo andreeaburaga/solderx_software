@@ -72,7 +72,7 @@ void setup()
   // Serial.println(currentFile);
 }
 
-void write_to_SD(char *buf_out, buffer_hamming *buf_out)
+void write_to_SD(char *buf_out, buffer_hamming hamming_out)
 {
   int solderingTargetTemperature = (hamming_out.buf[3] << 8) | hamming_out.buf[2];
   int solderingCurrentTemperature = (hamming_out.buf[5] << 8) | hamming_out.buf[4];
@@ -98,7 +98,7 @@ void write_to_SD(char *buf_out, buffer_hamming *buf_out)
    dataFile.println(solderingTargetTemperature);
 
   //snprintf(buf, sizeof(buf), "SolderingCurrentTemp:%d\n", solderingCurrentTemperature);
-  //strcat(buf_out, buf);
+  //strcat(buf_out, buf);2
    dataFile.print(F("solderingCurrentTemperature:"));
    dataFile.println(solderingCurrentTemperature);
 
