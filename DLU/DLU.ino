@@ -20,7 +20,7 @@ Adafruit_MPU6050 mpu;
 #define SD_PIN_CS 10
 File dataFile;
 char currentFile[50];
-
+bool ms5837_ok;
 void setup()
 {
   Serial.begin(38400);
@@ -32,18 +32,14 @@ void setup()
   Serial.println("dsa");
 
   // MS5837 Pressure + Temp Sensor
-  while (!dlu_sensor.init())
+  if (dlu_sensor.init())
+    ms5837_ok = false;
+
+  if (ms5837_ok)
   {
-    Serial.println("Init failed!");
-    // Serial.println("Are SDA/SCL connected correctly?");
-    // Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
-    // Serial.println("\n\n\n");
-    delay(1000);
+    dlu_sensor.setModel(MS5837::MS5837_30BA);
+    dlu_sensor.setFluidDensity(1.225); // kg/m^3 (freshwater, 1029 for seawater)
   }
-
-  dlu_sensor.setModel(MS5837::MS5837_30BA);
-  dlu_sensor.setFluidDensity(1.225); // kg/m^3 (freshwater, 1029 for seawater)
-
   // MPU6050 giroscop etc.
   //   if (!mpu.begin()) {
   //   //Serial.println("Failed to find MPU6050 chip");
@@ -89,71 +85,77 @@ void write_to_SD(char *buf_out, buffer_hamming hamming_out)
   dataFile.print(startMessage);
 
   // Serial.println("Writing to file\n");
-  //snprintf(buf, sizeof(buf), "Millis:%d\n", millis());
-  //strcat(buf_out, buf);
+  // snprintf(buf, sizeof(buf), "Millis:%d\n", millis());
+  // strcat(buf_out, buf);
 
-  //snprintf(buf, sizeof(buf), "SolderingTagetTemp:%d\n", solderingTargetTemperature);
-  //strcat(buf_out, buf);
-   dataFile.print(F("solderingTargetTemperature:"));
-   dataFile.println(solderingTargetTemperature);
+  // snprintf(buf, sizeof(buf), "SolderingTagetTemp:%d\n", solderingTargetTemperature);
+  // strcat(buf_out, buf);
+  dataFile.print(F("solderingTargetTemperature:"));
+  dataFile.println(solderingTargetTemperature);
 
-  //snprintf(buf, sizeof(buf), "SolderingCurrentTemp:%d\n", solderingCurrentTemperature);
-  //strcat(buf_out, buf);2
-   dataFile.print(F("solderingCurrentTemperature:"));
-   dataFile.println(solderingCurrentTemperature);
+  // snprintf(buf, sizeof(buf), "SolderingCurrentTemp:%d\n", solderingCurrentTemperature);
+  // strcat(buf_out, buf);
+  dataFile.print(F("solderingCurrentTemperature:"));
+  dataFile.println(solderingCurrentTemperature);
 
-  //snprintf(buf, sizeof(buf), "SampleDiscPos:%d\n", sampleDiscPosition);
-  //strcat(buf_out, buf);
-   dataFile.print(F("sampleDiscPosition:"));
-   dataFile.println(sampleDiscPosition);
+  // snprintf(buf, sizeof(buf), "SampleDiscPos:%d\n", sampleDiscPosition);
+  // strcat(buf_out, buf);
+  dataFile.print(F("sampleDiscPosition:"));
+  dataFile.println(sampleDiscPosition);
 
   // delay(50);
-  //snprintf(buf, sizeof(buf), "FeedingPos:%d\n", feedingMechanismPosition);
-  //strcat(buf_out, buf);
-   dataFile.print(F("feedingMechanismPosition:"));
-   dataFile.println(feedingMechanismPosition);
+  // snprintf(buf, sizeof(buf), "FeedingPos:%d\n", feedingMechanismPosition);
+  // strcat(buf_out, buf);
+  dataFile.print(F("feedingMechanismPosition:"));
+  dataFile.println(feedingMechanismPosition);
 
-  //snprintf(buf, sizeof(buf), "LinearMotorPos:%d\n", linearMotorPosition);
-  //strcat(buf_out, buf);
-   dataFile.print(F("linearMotorPosition:"));
-   dataFile.println(linearMotorPosition);
+  // snprintf(buf, sizeof(buf), "LinearMotorPos:%d\n", linearMotorPosition);
+  // strcat(buf_out, buf);
+  dataFile.print(F("linearMotorPosition:"));
+  dataFile.println(linearMotorPosition);
 
-  //snprintf(buf, sizeof(buf), "LO_State:%d\n", LO_State);
-  //strcat(buf_out, buf);
-   dataFile.print(F("LO_State:"));
-   dataFile.println(LO_State);
+  // snprintf(buf, sizeof(buf), "LO_State:%d\n", LO_State);
+  // strcat(buf_out, buf);
+  dataFile.print(F("LO_State:"));
+  dataFile.println(LO_State);
   // delay(50);
 
-  //snprintf(buf, sizeof(buf), "SOE_State:%d\n", SOE_State);
-  //strcat(buf_out, buf);
-   dataFile.print(F("SOE_State:"));
-   dataFile.println(SOE_State);
+  // snprintf(buf, sizeof(buf), "SOE_State:%d\n", SOE_State);
+  // strcat(buf_out, buf);
+  dataFile.print(F("SOE_State:"));
+  dataFile.println(SOE_State);
 
-  //snprintf(buf, sizeof(buf), "StateMachine:%d\n", stateMachineStatus);
-  //strcat(buf_out, buf);
-   dataFile.print(F("stateMachineStatus:"));
-   dataFile.println(stateMachineStatus);
+  // snprintf(buf, sizeof(buf), "StateMachine:%d\n", stateMachineStatus);
+  // strcat(buf_out, buf);
+  dataFile.print(F("stateMachineStatus:"));
+  dataFile.println(stateMachineStatus);
 
   // snprintf(buf, sizeof(buf), "\nSensorData:\n");
   // strcat(buf_out, buf);
-   dataFile.println(F("SensorData"));
+  dataFile.println(F("SensorData"));
   // Serial.println(F("Writing to file6"));
 
-  //snprintf(buf, sizeof(buf), "Temp IC3:%d\n", T);
-  //strcat(buf_out, buf);
-   dataFile.print(F("Temp IC3:"));
-   dataFile.println(T);
+  // snprintf(buf, sizeof(buf), "Temp IC3:%d\n", T);
+  // strcat(buf_out, buf);
+  dataFile.print(F("Temp IC3:"));
+  dataFile.println(T);
 
   // snprintf(buf, sizeof(buf), "Temp MS5837:%d\n", dlu_sensor.temperature()); // dlu_sensor.temperature()
   // strcat(buf_out, buf);
 
   // snprintf(buf, sizeof(buf), "Pressure MS5837:%d\n", dlu_sensor.pressure()); // dlu_sensor.pressure()
   // strcat(buf_out, buf);
+  uint8_t ms5837_temp = 255;
+  uint8_t ms5837_pressure = 255;
+  if(ms5837_ok){
+    ms5837_temp = dlu_sensor.temperature();
+    ms5837_pressure = dlu_sensor.pressure();
+  }
   dataFile.print(F("Temp MS5837:"));
-  dataFile.println(dlu_sensor.temperature());
-   
+  dataFile.println(ms5837_temp);
+
   dataFile.print(F("Pressure MS5837:"));
-  dataFile.println(dlu_sensor.pressure());
+  dataFile.println(ms5837_pressure);
 
   // Serial.println(F("Writing to file"));
   dataFile.print(F("millis:"));
@@ -226,8 +228,8 @@ void loop()
     dataFile = SD.open(currentFile, FILE_WRITE);
     if (dataFile)
     {
-      write_to_SD(bufferSD,hamming_out);
-      //TODO: write buffer to SD
+      write_to_SD(bufferSD, hamming_out);
+      // TODO: write buffer to SD
       dataFile.close();
       delay(100);
     }
