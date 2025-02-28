@@ -3,16 +3,16 @@ import tkinter
 import serial
 
 
-#port_ser = input("Port USB:")
-port_ser = 'COM5'
+port_ser = input("Port USB:")
+#port_ser = 'COM6'
 ser = serial.Serial(port=port_ser, baudrate=38400)
 
 def quit():
     global tkTop, ser
     if ser.is_open:
         ser.write(bytes('Q', 'UTF-8'))
-        # ser.close()
-    # tkTop.destroy()
+   #     ser.close() 
+   # tkTop.destroy()
 
 
 #Text box for telemetry data

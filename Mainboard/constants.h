@@ -34,7 +34,7 @@ struct solder_sm_data{
 
 //Motors
 const uint8_t linearMotor_Pin = PWM_MOTOR;
-const uint8_t linearMotor_extended = 60;   //motor is soldering 6 units/mm -TODO: 84
+const uint8_t linearMotor_extended = 65;   //motor is soldering 6 units/mm -TODO: 84
 const uint8_t linearMotor_retracted = 0;   //motor is retracted -TODO: 72
 
 const uint8_t sampleDisc_stepPin = STEP_DISK;

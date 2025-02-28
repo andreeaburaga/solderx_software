@@ -158,7 +158,7 @@ void write_to_SD(char *buf_out, buffer_hamming hamming_out)
   // Serial.println(F("Writing to file"));
   dataFile.print(F("millis:"));
   dataFile.println(millis());
-   dataFile.println();
+  dataFile.println();
 }
 
 void loop()
