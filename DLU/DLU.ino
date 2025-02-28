@@ -15,12 +15,15 @@
 
 MS5837 dlu_sensor;
 Adafruit_MPU6050 mpu;
+sensors_event_t a, g, temp;
 
 #define eeprom_1 0
 #define SD_PIN_CS 10
 File dataFile;
 char currentFile[50];
 bool ms5837_ok;
+bool mpu6050_ok;
+
 void setup()
 {
   Serial.begin(38400);
@@ -29,46 +32,70 @@ void setup()
   delay(50);
   startTempSensor();
   delay(50);
-  Serial.println("dsa");
+  Serial.println(F("Temp sensor started"));
 
   // MS5837 Pressure + Temp Sensor
   if (dlu_sensor.init())
-    ms5837_ok = false;
-
+    ms5837_ok = true;
+    Serial.println(F("dlu sensor started"));
   if (ms5837_ok)
   {
     dlu_sensor.setModel(MS5837::MS5837_30BA);
     dlu_sensor.setFluidDensity(1.225); // kg/m^3 (freshwater, 1029 for seawater)
+    Serial.println(F("dlu sensor okay"));
   }
-  // MPU6050 giroscop etc.
-  //   if (!mpu.begin()) {
-  //   //Serial.println("Failed to find MPU6050 chip");
-  //   while (1) {
-  //     delay(10);
-  //   }
-  // }
-  // mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
-  // mpu.setGyroRange(MPU6050_RANGE_250_DEG);
-  // mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
 
+  // MPU6050 giroscop etc.
+  Serial.println(F("MPU6050 start"));
+  if (mpu.begin())
+  {
+    Serial.println(F("MPU6050 okay"));
+    mpu6050_ok = true;
+  }
+  if (mpu6050_ok)
+  {
+    mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
+    /*
+    MPU6050_RANGE_2_G
+    MPU6050_RANGE_4_G
+    MPU6050_RANGE_8_G
+    MPU6050_RANGE_16_G
+    */
+    mpu.setGyroRange(MPU6050_RANGE_250_DEG);
+    /*
+    MPU6050_RANGE_250_DEG
+    MPU6050_RANGE_500_DEG
+    MPU6050_RANGE_1000_DEG
+    MPU6050_RANGE_2000_DEG
+    */
+    mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+    /*
+    MPU6050_BAND_260_HZ
+    MPU6050_BAND_184_HZ
+    MPU6050_BAND_94_HZ
+    MPU6050_BAND_44_HZ
+    MPU6050_BAND_21_HZ
+    MPU6050_BAND_10_HZ
+    MPU6050_BAND_5_HZF
+    */
+  }
   int idRead = EEPROM.read(eeprom_1) + 1;
   idRead %= 256;
   EEPROM.write(eeprom_1, idRead);
   sprintf(currentFile, "datalog%d.txt\0", idRead);
 
-  if (!SD.begin(SD_PIN_CS))
+  while (!SD.begin(SD_PIN_CS))
   {
-    Serial.println("Card failed, or not present");
+    Serial.println(F("Card failed, or not present"));
     // don't do anything more:
-    while (1)
-      ;
+    delay(100);
   }
   // Serial.println("card initialized.");
 
   // Serial.println(currentFile);
 }
 
-void write_to_SD(char *buf_out, buffer_hamming hamming_out)
+void write_to_SD(buffer_hamming hamming_out)
 {
   int solderingTargetTemperature = (hamming_out.buf[3] << 8) | hamming_out.buf[2];
   int solderingCurrentTemperature = (hamming_out.buf[5] << 8) | hamming_out.buf[4];
@@ -79,9 +106,9 @@ void write_to_SD(char *buf_out, buffer_hamming hamming_out)
   int SOE_State = (hamming_out.buf[12] & 2) >> 1;
   int stateMachineStatus = (hamming_out.buf[13] << 8);
 
-  char buf[100] = "\0";
+  // char buf[100] = "\0";
   char startMessage[50] = "\nPackage Start\n";
-  strcat(buf_out, startMessage);
+  // strcat(buf_out, startMessage);
   dataFile.print(startMessage);
 
   // Serial.println("Writing to file\n");
@@ -147,7 +174,8 @@ void write_to_SD(char *buf_out, buffer_hamming hamming_out)
   // strcat(buf_out, buf);
   uint8_t ms5837_temp = 255;
   uint8_t ms5837_pressure = 255;
-  if(ms5837_ok){
+  if (ms5837_ok)
+  {
     ms5837_temp = dlu_sensor.temperature();
     ms5837_pressure = dlu_sensor.pressure();
   }
@@ -157,7 +185,26 @@ void write_to_SD(char *buf_out, buffer_hamming hamming_out)
   dataFile.print(F("Pressure MS5837:"));
   dataFile.println(ms5837_pressure);
 
-  // Serial.println(F("Writing to file"));
+  if (mpu6050_ok)
+  {
+    dataFile.print(F("Acceleration X: "));
+    dataFile.print(a.acceleration.x);
+    dataFile.print(F(", Y: "));
+    dataFile.print(a.acceleration.y);
+    dataFile.print(F(", Z: "));
+    dataFile.print(a.acceleration.z);
+    dataFile.println(F(" m/s^2"));
+
+    dataFile.print(F("Rotation X: "));
+    dataFile.print(g.gyro.x);
+    dataFile.print(F(", Y: "));
+    dataFile.print(g.gyro.y);
+    dataFile.print(F(", Z: "));
+    dataFile.print(g.gyro.z);
+    dataFile.println(F(" rad/s"));
+  }
+
+  Serial.println(F("Package written to SD"));
   dataFile.print(F("millis:"));
   dataFile.println(millis());
   dataFile.println();
@@ -170,41 +217,35 @@ void loop()
   delay(20);
 
   // MS5837 printing
-  dlu_sensor.read();
+  if (ms5837_ok)
+    dlu_sensor.read();
   delay(20);
-  char bufferSD[512];
-  // Serial.println(dlu_sensor.temperature());
-  // Serial.println(dlu_sensor.pressure());
 
-  // MPU6050 sensor printing
-  // sensors_event_t a, g, temp;
-  // mpu.getEvent(&a, &g, &temp);
-  // Serial.print("Acceleration X: ");
-  // Serial.print(a.acceleration.x);
-  // Serial.print(", Y: ");
-  // Serial.print(a.acceleration.y);
-  // Serial.print(", Z: ");
-  // Serial.print(a.acceleration.z);
-  // Serial.println(" m/s^2");
+  if (mpu6050_ok){
+    mpu.getEvent(&a, &g, &temp);
+    Serial.print(F("Acceleration X: "));
+    Serial.print(a.acceleration.x);
+    Serial.print(F(", Y: "));
+    Serial.print(a.acceleration.y);
+    Serial.print(F(", Z: "));
+    Serial.print(a.acceleration.z);
+    Serial.println(F(" m/s^2"));
 
-  // Serial.print("Rotation X: ");
-  // Serial.print(g.gyro.x);
-  // Serial.print(", Y: ");
-  // Serial.print(g.gyro.y);
-  // Serial.print(", Z: ");
-  // Serial.print(g.gyro.z);
-  // Serial.println(" rad/s");
-
-  // Serial.print("Temperature: ");
-  // Serial.print(temp.temperature);
-  // Serial.println(" degC");
+    Serial.print(F("Rotation X: "));
+    Serial.print(g.gyro.x);
+    Serial.print(F(", Y: "));
+    Serial.print(g.gyro.y);
+    Serial.print(F(", Z: "));
+    Serial.print(g.gyro.z);
+    Serial.println(F(" rad/s"));
+  }
+  delay(20);
 
   char receivedSerial[50] = {0};
-  Serial.println(Serial.available());
 
   if (Serial.available() >= Serial_Bytes)
   {
-    Serial.println("Enough Bytes");
+    Serial.println(F("Enough Bytes"));
 
     for (int i = 0; i < Serial_Bytes; i++)
     {
@@ -228,18 +269,15 @@ void loop()
     dataFile = SD.open(currentFile, FILE_WRITE);
     if (dataFile)
     {
-      write_to_SD(bufferSD, hamming_out);
-      // TODO: write buffer to SD
+      write_to_SD(hamming_out);
+      Serial.println(F("Se poate scrie"));
       dataFile.close();
       delay(100);
     }
     else
     {
-      Serial.print("Error writing to: ");
+      Serial.print(F("Error writing to: "));
       Serial.println(currentFile);
-
-      // Serial.print("error opening ");
-      // Serial.println(currentFile);
     }
   }
 }

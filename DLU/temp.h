@@ -1,5 +1,6 @@
 #ifndef TEMP_H
 #define TEMP_H
+//TSYS03
 uint8_t TEMP_I2C_ADDRESS = (0x40);
 uint8_t TEMP_RESET = 0x1E;
 uint8_t TEMP_START_CONVERSION = (0x46);
