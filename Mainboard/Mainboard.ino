@@ -6,18 +6,14 @@
 #include "pins.h"
 
 Servo linearMotor;
-//AccelStepper sampleDisc(AccelStepper::DRIVER, sampleDisc_stepPin, sampleDisc_dirPin);
-//AccelStepper feedingMechanism(AccelStepper::DRIVER, feedingMechanism_stepPin, feedingMechanism_dirPin);
-//SoftwareSerial dataLogger(softwareSerial_RXpin, softwareSerial_TXpin); // RX, TX
 //#define dataLogger Serial2
-
 
 unsigned long tStartSample = 0;
 uint8_t machineState = 0;
 int16_t targetTemperature = 0;
 int16_t currentTemperature = 0;
 
-//Variables for heating/reading temperature
+uint8_t armedState = SYSTEM_NOT_ARMED;  
 
 bool DISK_DIR_CW = true; // directie disk clockwise
 bool FM_DIR_CW = true;
@@ -27,8 +23,10 @@ inline void runTask(int i);
 int32_t currentStepsDisk, targetStepsDisk = 0;
 int32_t currentStepsFM, targetStepsFM = 0;
 //                                    telemetrie_out, temp, fm, disk, blink, telemetrie_in,
-unsigned long previousMillis[taskNumber] = {0, 0, 0, 0, 0, 0};
-unsigned long deltaMillis[taskNumber] = {500, 50, 30, 30, 500, 500};
+unsigned long previousMillis[taskNumber] = {0, 0, 0, 0, 0};
+//unsigned long deltaMillis[taskNumber] = {500, 50, 30, 30, 500, 500}; //TODO: de scos blink
+unsigned long deltaMillis[taskNumber] = {500, 50, 30, 30, 500}; 
+
 //TODO: prioritate
 unsigned long LO_millis = 0;
 unsigned long ms = millis();
@@ -37,10 +35,13 @@ int sampleNumber = 0;
 int sampleDone = 1;
 int sampleState = 0;
 int valoare_led = 1;
+
 void setup() {
   //DCDC
   pinMode(ONOFF12, OUTPUT);
   pinMode(ONOFF10, OUTPUT);
+  digitalWrite(ONOFF12, LOW);
+  digitalWrite(ONOFF10, LOW);
 
   //Sample disk
   pinMode(STEP_DISK, OUTPUT);
@@ -57,7 +58,6 @@ void setup() {
 
   //Linear
   linearMotor.attach(linearMotor_Pin);
-  // NOTE Maria
   linearMotor.write(linearMotor_retracted); //departe de disk
 
   digitalWrite(NSLEEP_FM, HIGH);
@@ -88,13 +88,8 @@ void setup() {
   pinMode(LO_Pin, INPUT);
   pinMode(SOE_Pin, INPUT);
 
-  //  for (int i = 0; i < 4; i++) {
-  //    digitalWrite(CAM_LED, HIGH);
-  //    delay(500);
-  //    digitalWrite(CAM_LED, LOW);
-  //    delay(500);
-  //  }
-  //  delay(2000);
+  
+
 }
 
 void loop()
@@ -110,7 +105,7 @@ void loop()
       }
     }
     stateMachineUpdate();
-//  
+  
 }
 
 uint8_t count = 0;
@@ -119,14 +114,11 @@ inline void runTask(int i)
 {
   switch (i)
   {
-    case 0:
+    case 0: //telemetrie
       {
         telemetryUpdate();
-        // Serial.print("Current Steps FM: "), Serial.println(currentStepsFM);
-        // Serial.print("Target Steps FM: "), Serial.println(targetStepsFM);
-        // Serial.println();
+        break;
       }
-      break;
     case 1: // temp
       {
         if (count == 0) {
@@ -143,9 +135,8 @@ inline void runTask(int i)
         count = count % 6;
         break;
       }
-    case 2: {
-        // disk
-        //digitalWrite(LED_BUILTIN,HIGH);
+    case 2: //disk
+      {
         if (currentStepsDisk < targetStepsDisk) {
           DISK_DIR_CW = true;
           digitalWrite(DIR_DISK, HIGH);
@@ -153,6 +144,11 @@ inline void runTask(int i)
         else if (currentStepsDisk > targetStepsDisk) {
           DISK_DIR_CW = false;
           digitalWrite(DIR_DISK, LOW);
+
+          //Posibil pentru disarm
+          //if(currentStepsDisk == 0){
+          //  digitalWrite(ONOFF12, LOW);
+          //}
         }
         else {
           break;
@@ -169,9 +165,8 @@ inline void runTask(int i)
           currentStepsDisk--;
         break;
       }
-    case 3: {
-        // FM
-        //digitalWrite(LED_BUILTIN,HIGH);
+    case 3: //fm
+     {
         if (currentStepsFM < targetStepsFM) {
           FM_DIR_CW = true;
           digitalWrite(DIR_FM, HIGH);
@@ -195,13 +190,14 @@ inline void runTask(int i)
           currentStepsFM--;
         break;
       }
-    case 4:
+    // case 4:  //TODO: de scos
+    //   {
+    //     if (valoare_led) digitalWrite(CAM_LED, HIGH), valoare_led = 0;
+    //     else digitalWrite(CAM_LED, LOW), valoare_led = 1;
+    //     break;
+    //   }
+    case 4:// manual commands
       {
-        if (valoare_led) digitalWrite(CAM_LED, HIGH), valoare_led = 0;
-        else digitalWrite(CAM_LED, LOW), valoare_led = 1;
-        break;
-      }
-    case 5: {
         commsUpdate();
         break;
       }

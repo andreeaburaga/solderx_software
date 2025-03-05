@@ -1,14 +1,14 @@
 #include "hamming.h"
 void telemetryUpdate() {
 
-  // PROASPAT ADAUGAT
-  static int i = 0;
-  i++;
-  if (i % 2 == 0) {
-    digitalWrite(CAM_LED, HIGH);
-  } else {
-    digitalWrite(CAM_LED, LOW);
-  }
+  // // PROASPAT ADAUGAT
+  // static int i = 0;
+  // i++;
+  // if (i % 2 == 0) {
+  //   digitalWrite(CAM_LED, HIGH);
+  // } else {
+  //   digitalWrite(CAM_LED, LOW);
+  // }
 
   //
   //  static unsigned long lastTelemetrySent = 0;

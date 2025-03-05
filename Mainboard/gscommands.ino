@@ -5,9 +5,7 @@ void commsUpdate() {
   static uint8_t bufferPosition = 0;
   if(Serial1.available() > 0) {  //comms e pe Serial1, asculta pe Serial1
     buffer[bufferPosition] = Serial1.read();
-    // Serial.print("Buffer: ");
-    // Serial.print(buffer[0]);
-    // Serial.println(buffer[1]);
+
     bufferPosition++;
     if(bufferPosition >= 2) {   //check for overflow
       bufferPosition = 0;
@@ -21,15 +19,12 @@ void commsUpdate() {
           //Camera LED control
           case 'L':
             digitalWrite(CAM_LED, HIGH);
-            //Serial.println("Camera Led ON");
-            //dataLogger.println("Camera Led ON");
             break;
           case 'l':
             digitalWrite(CAM_LED, LOW);
-            //Serial.println("Camera Led OFF");
-            //dataLogger.println("Camera Led OFF");
             break;
-
+          
+          //Turn ON/OFF camera
           case 'C':
             digitalWrite(CAM_EN, HIGH);
             break;
@@ -63,8 +58,6 @@ void commsUpdate() {
 
           //Sample disc rotate
           case 'M': //clockwise
-            // sampleDisc.move(10);
-            // sampleDisc.runToPosition();
             targetStepsDisk += stateData.targetStepsDisk;
             break;
           case 'm': //counterclockwise
@@ -73,13 +66,9 @@ void commsUpdate() {
 
           //FM rotate
           case 'D': //clockwise
-            // feedingMechanism.move(50);
-            // feedingMechanism.runToPosition();
             targetStepsFM += stateData.targetStepsFM;
             break;
           case 'd': //counterclockwise
-            // feedingMechanism.move(-50);
-            // feedingMechanism.runToPosition();
             targetStepsFM -= stateData.targetStepsFM;
             break;
 
@@ -90,18 +79,6 @@ void commsUpdate() {
           case 'h': //heating off
             targetTemperature = 0;
             break;
-
-
-          // //Heating Control 
-          // case 'H'://Heating on
-          //   analogWrite(PWM_Solder,40);
-          //   break;
-          // case 'h'://Maintain Temp
-          //   analogWrite(PWM_Solder,17);
-          //   break;
-          // case 'o'://Heating off
-          //   analogWrite(PWM_Solder,0);
-          //   break;
 
           //ARM system to HOT/COLD (test) runs
           case 'F': //Arm HOT
@@ -114,19 +91,17 @@ void commsUpdate() {
           default:
             Serial.print("Unknown command from GS:");
             Serial.println(buffer[0]);
-            //dataLogger.println("Unknown command from GS");
-            //dataLogger.println(buffer[0]);
           break;
         }
 
-      }else{
+      }else if((armedState == SYSTEM_ARMED_COLD) || (armedState == SYSTEM_ARMED_HOT))
+      {
         //Here we ignore all commands received while we are ARMED HOT/COLD
         //except for disarm
         switch(buffer[0]) {
           case 'x':
             disarmExperiment();
-            Serial.println("Disarmed");
-            //dataLogger.println("Disarmed");
+            //Serial.println("Disarmed");
             break;
         }
       }

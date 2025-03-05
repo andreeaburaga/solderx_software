@@ -4,9 +4,9 @@
 
 const uint32_t second = 1000UL;
 #define solderingTemperature 300
-#define taskNumber 6
+#define taskNumber 5
 
-#define LO_delta 5 //seconds
+#define LO_delta 20 //seconds //TODO: modif in 20, era pus 5
 
 #define microsteppingRate 1
 #define STEP_PERIOD 50 // micros , de vazut cum e cu microstepping
@@ -21,11 +21,12 @@ struct solder_sm_data{
   unsigned long enteredAt=0;
   const unsigned long t_SU_ENGAGE = 2 * second;
   const unsigned long t_SU_HEAT = 2 * second;
-  const unsigned long t_SU_SOLDER = 2 * second;
+  const unsigned long t_SU_SOLDER = 5 * second;
   const unsigned long t_SU_RETRACT = 3 * second;
   const unsigned long t_SU_DISK = 1 * second;
-  const int stepsForwardFM = 30*2;
-  const int stepsBackwardFM = 10*2;
+  const int firstStepsFm = 40*2;
+  const int stepsForwardFM = 40*2;
+  const int stepsBackwardFM = 20*2;
   const int targetStepsDisk = 10*2;
   const int targetStepsFM = 10*2;//motoare noi
   const unsigned long soeMotorDelay = 2*second;
@@ -34,8 +35,8 @@ struct solder_sm_data{
 
 //Motors
 const uint8_t linearMotor_Pin = PWM_MOTOR;
-const uint8_t linearMotor_extended = 65;   //motor is soldering 6 units/mm -TODO: 84
-const uint8_t linearMotor_retracted = 0;   //motor is retracted -TODO: 72
+const uint8_t linearMotor_extended = 80;   //motor is soldering 6 units/mm -TODO: 84
+const uint8_t linearMotor_retracted = 60;   //motor is retracted -TODO: 72
 
 const uint8_t sampleDisc_stepPin = STEP_DISK;
 const uint8_t sampleDisc_dirPin = DIR_DISK;
@@ -63,6 +64,6 @@ const uint8_t softwareSerial_TXpin = TXD1;
 #define SYSTEM_NOT_ARMED    0   //Allows TCs from GND
 #define SYSTEM_ARMED_COLD   1   //SolderingUnit will stay cold during experiment run
 #define SYSTEM_ARMED_HOT    2   //SolderingUnit will stay heatup during experiment run
-uint8_t armedState = SYSTEM_NOT_ARMED;  
+//uint8_t armedState = SYSTEM_NOT_ARMED;  
 
 #endif

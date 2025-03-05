@@ -1,7 +1,7 @@
 void stateMachineUpdate()
 {
   //static unsigned long lastStateChange = 0;
-   static uint32_t soeTime = 0;
+  static uint32_t soeTime = 0;
 
   switch (machineState)
   {
@@ -28,23 +28,19 @@ void stateMachineUpdate()
         //functie
         digitalWrite(EN_FM, HIGH);
         digitalWrite(NSLEEP_FM, HIGH);
-        // Serial.println("S1");
         machineState++;
         break;
       }
     case 2: {
         digitalWrite(ONOFF10, HIGH);
-        // Serial.println("S2");
         machineState++;
         break;
       }
     case 3: {
         if (digitalRead(LO) == 0)
         {
-          // Serial.println("LO detected.");
           LO_millis = millis();
           //lastStateChange = millis();
-          // Serial.println("S3");
           machineState++;
         }
         break;
@@ -52,7 +48,7 @@ void stateMachineUpdate()
     case 4: //LO + 50s
       // wait for LO signal
       {
-        if (millis() - LO_millis > LO_delta * second ) {
+        if (millis() - LO_millis > LO_delta * second ) { //TODO: LO_delta - e 20 in diagrama, atunci incalzeste + camera
           if (armedState == SYSTEM_ARMED_HOT)
             targetTemperature = solderingTemperature;
           else
@@ -60,18 +56,16 @@ void stateMachineUpdate()
           digitalWrite(CAM_LED, HIGH);
           digitalWrite(CAM_EN, HIGH);
           machineState++;
-          // Serial.println("S4");
-          //
         }
         break;
       }
     case 5: //SOE = LO + 85s
       {
-        if (digitalRead(SOE) == 0)
+        if (digitalRead(SOE) == 0) 
         {
           linearMotor.write(linearMotor_retracted);
           soeTime = millis();
-          Serial.println("S5");
+          //Serial.println("S5");
           targetStepsDisk += stateData.targetStepsDisk;
           machineState++;
         }
@@ -85,21 +79,26 @@ void stateMachineUpdate()
         }
         break;
       }
+    case 7: {
+      targetStepsFM += stateData.firstStepsFm ;
+      machineState++;
+      break;
+    }
     // case 7: { //retract SU from parking slot, move disk
     //     targetStepsDisk += stateData.targetStepsDisk;
     //     Serial.println("S6");
     //     machineState++;
     //     break;
     //   }
-    case 7: //SLC
+    case 8: //SLC
       {
-        if (sampleNumber < 17) {
+        if (sampleNumber < 19) {
           //
 
           switch (solderState) {
             case SU_ENGAGE: {
-                digitalWrite(EN_FM, LOW);
-                digitalWrite(EN_DISK, LOW); //release holding torque
+                // digitalWrite(EN_FM, LOW);
+                // digitalWrite(EN_DISK, LOW); //release holding torque
                 linearMotor.write(linearMotor_extended);
                 if (millis() - stateData.enteredAt > stateData.t_SU_ENGAGE) {
                   //
@@ -110,8 +109,8 @@ void stateMachineUpdate()
                 break;
               }
             case SU_HEAT: {
-                digitalWrite(EN_FM, HIGH); //activate holding
-                digitalWrite(EN_DISK, HIGH);
+                // digitalWrite(EN_FM, HIGH); //activate holding
+                // digitalWrite(EN_DISK, HIGH);
                 if (millis() - stateData.enteredAt > stateData.t_SU_HEAT) {
                   //
                   if (sampleNumber % 2 == 1) { //wick
@@ -134,7 +133,6 @@ void stateMachineUpdate()
                   targetStepsFM -= stateData.stepsBackwardFM;
                   // Serial.println("Moving to SU_RETRACT from SU_SOLDER");
                 }
-
                 break;
               }
             case SU_RETRACT: {
@@ -149,7 +147,8 @@ void stateMachineUpdate()
                 }
                 break;
               }
-            case SU_DISK: {
+            case SU_DISK: 
+            {
                 if (millis() - stateData.enteredAt > stateData.t_SU_DISK) {
                   sampleNumber++;
                   solderState = SU_ENGAGE;
@@ -165,7 +164,7 @@ void stateMachineUpdate()
         }
         break;
       }
-    case 8:
+    case 9:
       linearMotor.write(linearMotor_extended);
       disarmExperiment();
       break;
@@ -178,7 +177,6 @@ void stateMachineUpdate()
 void armExperiment(uint8_t state) {
   if (state != SYSTEM_ARMED_HOT && state != SYSTEM_ARMED_COLD) {
     Serial.println("Invalid arming.");
-    //dataLogger.println("Invalid arming.");
     return;
   }
   targetTemperature = 0;
@@ -188,11 +186,31 @@ void armExperiment(uint8_t state) {
 
 }
 
-void disarmExperiment() {
-  machineState = 0;
+void disarmExperiment()
+{
   armedState = SYSTEM_NOT_ARMED;
+  machineState = 0;
 
-  digitalWrite(ONOFF12, LOW);
+  //Turn off heating + back
   targetTemperature = 0;
+  digitalWrite(ONOFF10, LOW);
+  linearMotor.write(linearMotor_retracted);
+
+  //Turn off DCDC for 12V
+  digitalWrite(ONOFF12, LOW);
+
+  //Return Sample Disk to initial position
+  // digitalWrite(EN_DISK, HIGH);
+  // digitalWrite(NSLEEP_DISK, HIGH);
+  // targetStepsDisk = 0;
+  // digitalWrite(ONOFF12, LOW);
+
+
+  //machineState = 0;
+  //armedState = state;
+  //digitalWrite(ONOFF12, LOW);
+  //digitalWrite(ONOFF10, LOW);
+
+
   //ToDo: Return sample disc to initial position. Then the linear motor to park position. Stop feedingMechanism.
 }
