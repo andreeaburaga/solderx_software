@@ -22,7 +22,7 @@ struct solder_sm_data{
   const unsigned long t_SU_ENGAGE = 2 * second;
   const unsigned long t_SU_HEAT = 2 * second;
   const unsigned long t_SU_SOLDER = 5 * second;
-  const unsigned long t_SU_RETRACT = 3 * second;
+  const unsigned long t_SU_RETRACT = 1.5 * second; //3 * second;
   const unsigned long t_SU_DISK = 1 * second;
   const int firstStepsFm = 40*2;
   const int stepsForwardFM = 40*2;
@@ -30,13 +30,15 @@ struct solder_sm_data{
   const int targetStepsDisk = 10*2;
   const int targetStepsFM = 10*2;//motoare noi
   const unsigned long soeMotorDelay = 2*second;
+  const int delayStepsSample = 9*2;
   
 } stateData;
 
 //Motors
 const uint8_t linearMotor_Pin = PWM_MOTOR;
-const uint8_t linearMotor_extended = 80;   //motor is soldering 6 units/mm -TODO: 84
+const uint8_t linearMotor_extended = 88;   //motor is soldering 6 units/mm -TODO: 84
 const uint8_t linearMotor_retracted = 60;   //motor is retracted -TODO: 72
+const uint8_t linearMotor_arm_extended = 88; //for arm, Kiruna
 
 const uint8_t sampleDisc_stepPin = STEP_DISK;
 const uint8_t sampleDisc_dirPin = DIR_DISK;

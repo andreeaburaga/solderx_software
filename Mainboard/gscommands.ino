@@ -91,7 +91,7 @@ void commsUpdate() {
           default:
             Serial.print("Unknown command from GS:");
             Serial.println(buffer[0]);
-          break;
+            break;
         }
 
       }else if((armedState == SYSTEM_ARMED_COLD) || (armedState == SYSTEM_ARMED_HOT))

@@ -24,7 +24,7 @@ int32_t currentStepsDisk, targetStepsDisk = 0;
 int32_t currentStepsFM, targetStepsFM = 0;
 //                                    telemetrie_out, temp, fm, disk, blink, telemetrie_in,
 unsigned long previousMillis[taskNumber] = {0, 0, 0, 0, 0};
-//unsigned long deltaMillis[taskNumber] = {500, 50, 30, 30, 500, 500}; //TODO: de scos blink
+
 unsigned long deltaMillis[taskNumber] = {500, 50, 30, 30, 500}; 
 
 //TODO: prioritate
@@ -58,8 +58,8 @@ void setup() {
 
   //Linear
   linearMotor.attach(linearMotor_Pin);
-  linearMotor.write(linearMotor_retracted); //departe de disk
-
+  linearMotor.write(linearMotor_arm_extended); //departe de disk
+  //Kiruna
   digitalWrite(NSLEEP_FM, HIGH);
   digitalWrite(EN_FM, HIGH);
   digitalWrite(DIR_FM, HIGH);
@@ -87,8 +87,6 @@ void setup() {
 
   pinMode(LO_Pin, INPUT);
   pinMode(SOE_Pin, INPUT);
-
-  
 
 }
 
@@ -145,10 +143,6 @@ inline void runTask(int i)
           DISK_DIR_CW = false;
           digitalWrite(DIR_DISK, LOW);
 
-          //Posibil pentru disarm
-          //if(currentStepsDisk == 0){
-          //  digitalWrite(ONOFF12, LOW);
-          //}
         }
         else {
           break;

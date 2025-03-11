@@ -45,10 +45,10 @@ void stateMachineUpdate()
         }
         break;
       }
-    case 4: //LO + 50s
-      // wait for LO signal
+    case 4: //LO + LO_delta
+      // wait 20s after LO signal to heat and turn camera on
       {
-        if (millis() - LO_millis > LO_delta * second ) { //TODO: LO_delta - e 20 in diagrama, atunci incalzeste + camera
+        if (millis() - LO_millis > LO_delta * second ) { 
           if (armedState == SYSTEM_ARMED_HOT)
             targetTemperature = solderingTemperature;
           else
@@ -63,38 +63,39 @@ void stateMachineUpdate()
       {
         if (digitalRead(SOE) == 0) 
         {
-          linearMotor.write(linearMotor_retracted);
-          soeTime = millis();
+          //linearMotor.write(linearMotor_retracted);
+          //soeTime = millis();
           //Serial.println("S5");
-          targetStepsDisk += stateData.targetStepsDisk;
+          //targetStepsDisk += stateData.targetStepsDisk;
           machineState++;
         }
         break;
       }
+    // case 6:
+    //   {
+    //     if(millis() - soeTime > stateData.soeMotorDelay)
+    //     {
+    //       machineState++;
+    //     }
+    //     break;
+    //   }
     case 6:
       {
-        if(millis() - soeTime > stateData.soeMotorDelay)
-        {
-          machineState++;
-        }
+        targetStepsFM += stateData.firstStepsFm ;
+        machineState++;
         break;
       }
-    case 7: {
-      targetStepsFM += stateData.firstStepsFm ;
-      machineState++;
-      break;
-    }
     // case 7: { //retract SU from parking slot, move disk
     //     targetStepsDisk += stateData.targetStepsDisk;
     //     Serial.println("S6");
     //     machineState++;
     //     break;
     //   }
-    case 8: //SLC
+    case 7: //SLC
       {
-        if (sampleNumber < 19) {
-          //
-
+        if(sampleNumber < 19) //Flight ready code for 10 samples
+        //if(sampleNumber < 8)
+        {
           switch (solderState) {
             case SU_ENGAGE: {
                 // digitalWrite(EN_FM, LOW);
@@ -108,7 +109,8 @@ void stateMachineUpdate()
                 }
                 break;
               }
-            case SU_HEAT: {
+            case SU_HEAT:
+             {
                 // digitalWrite(EN_FM, HIGH); //activate holding
                 // digitalWrite(EN_DISK, HIGH);
                 if (millis() - stateData.enteredAt > stateData.t_SU_HEAT) {
@@ -127,28 +129,36 @@ void stateMachineUpdate()
                 }
                 break;
               }
-            case SU_SOLDER: {
+            case SU_SOLDER:
+             {
                 if (millis() - stateData.enteredAt > stateData.t_SU_SOLDER) {
                   solderState = SU_RETRACT;
                   targetStepsFM -= stateData.stepsBackwardFM;
                   // Serial.println("Moving to SU_RETRACT from SU_SOLDER");
+                  stateData.enteredAt = millis();//debugging timp lung retract
                 }
                 break;
               }
-            case SU_RETRACT: {
+            case SU_RETRACT:
+             {
                 linearMotor.write(linearMotor_retracted);
                 if (millis() - stateData.enteredAt > stateData.t_SU_RETRACT) {
                   //
                   solderState = SU_DISK;
                   // Serial.println("Moving to SU_DISK from SU_RETRACT");
+                  // if(sampleNumber == 8){
+                  //   targetStepsDisk += stateData.delayStepsSample;
+                  // }
+                  // else{
+                  //   targetStepsDisk += stateData.targetStepsDisk;
+                  // }
                   targetStepsDisk += stateData.targetStepsDisk;
                   stateData.enteredAt = millis();
-
                 }
                 break;
               }
             case SU_DISK: 
-            {
+              {
                 if (millis() - stateData.enteredAt > stateData.t_SU_DISK) {
                   sampleNumber++;
                   solderState = SU_ENGAGE;
@@ -159,22 +169,25 @@ void stateMachineUpdate()
               }
           }
         }
-        else {
+        else
+         {
           machineState++;
-        }
+         }
         break;
       }
-    case 9:
-      linearMotor.write(linearMotor_extended);
+    case 8:
+    {// linearMotor.write(linearMotor_extended);
       disarmExperiment();
       break;
+    }
     default:
       Serial.print("Machine state: "), Serial.println(machineState);
       break;
   }
 }
 
-void armExperiment(uint8_t state) {
+void armExperiment(uint8_t state)
+ {
   if (state != SYSTEM_ARMED_HOT && state != SYSTEM_ARMED_COLD) {
     Serial.println("Invalid arming.");
     return;
@@ -182,7 +195,7 @@ void armExperiment(uint8_t state) {
   targetTemperature = 0;
   machineState = 1;
   armedState = state;
-  linearMotor.write(linearMotor_extended);
+  linearMotor.write(linearMotor_arm_extended); // Kiruna
 
 }
 
@@ -199,18 +212,4 @@ void disarmExperiment()
   //Turn off DCDC for 12V
   digitalWrite(ONOFF12, LOW);
 
-  //Return Sample Disk to initial position
-  // digitalWrite(EN_DISK, HIGH);
-  // digitalWrite(NSLEEP_DISK, HIGH);
-  // targetStepsDisk = 0;
-  // digitalWrite(ONOFF12, LOW);
-
-
-  //machineState = 0;
-  //armedState = state;
-  //digitalWrite(ONOFF12, LOW);
-  //digitalWrite(ONOFF10, LOW);
-
-
-  //ToDo: Return sample disc to initial position. Then the linear motor to park position. Stop feedingMechanism.
 }
