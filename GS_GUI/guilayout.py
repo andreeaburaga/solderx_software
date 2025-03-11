@@ -252,7 +252,7 @@ def makelayout(tkTop):
         bd=3,
         activebackground='green'
     )
-    button18state.grid(row=11, column=2, padx=10, pady=15, sticky='nsew')
+    button18state.grid(row=11, column=2, padx=10, pady=15, sticky='nsew')  
 
     '''TELEMETRY'''
 

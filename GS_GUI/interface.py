@@ -6,6 +6,7 @@ import random
 import os
 from enum import Enum
 from typing import Tuple
+import datetime
 
 def get_bit(byte, bit):
     return (byte & (1 << bit)) >> bit
@@ -64,8 +65,13 @@ def try_decode(buffer: bytearray) -> Tuple[DecodeResult, bytearray]:
 def readFromSerial():
     global ser, textbox, since_last, elapsed
     buffer = bytearray()
-    saveFile = open("log_data.bin", "wb")
-    saveFileText = open("log_data_text.txt", "wt")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    os.makedirs("GS_GUI/logs/bin", exist_ok=True)
+    os.makedirs("GS_GUI/logs/txt", exist_ok=True)
+
+    saveFile = open(f"GS_GUI/logs/bin/log_data_{timestamp}.bin", "wb")
+    saveFileText = open(f"GS_GUI/logs/txt/log_data_{timestamp}_text.txt", "wt")
 
     solderingTargetTemperature = 0
     solderingCurrentTemperature = 0
@@ -97,6 +103,7 @@ def readFromSerial():
 
                 saveFile.write(msg)
                 saveFileText.write("New Message:")
+                saveFileText.write('t={0:.3f}s'.format(time.time() - starttime)+',')
 
                 solderingTargetTemperature = int.from_bytes(msg[2:4], byteorder='little')
                 saveFileText.write(f"solderingTargetTemperature:{solderingTargetTemperature},")
@@ -122,18 +129,22 @@ def readFromSerial():
                 stateMachineStatus = int.from_bytes(msg[13:14], byteorder='little')
                 saveFileText.write(f"stateMachineStatus:{stateMachineStatus},")
 
+                saveFileText.write(f"\n")
+
                 buffer = bytearray()
             else:
                 buffer.pop(0)
                 if (error == DecodeResult.WRONG_CHECKSUM):
                     wrong += 1
                     print("Found a corrupted message")
+                    saveFileText.write(f"Found a corrupted message")
                 else:
                     # this is expected to appear a bunch of times in short bursts (like ~30 at a time)
                     # this is because once 1 byte within a packet is corrupted which would cause either
                     # the sync check or the checksum to fail, we can expect the following attempts to decode
                     # a packet to also fail. TODO: write a better explanation
                     print("Not Sync")
+                    saveFileText.write(f"Not Sync")
 
         elapsed = time.time_ns() - last
 
